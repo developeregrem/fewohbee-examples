@@ -1,0 +1,6 @@
+<p>Sehr {% if 'customer.mr'|trans == attribute(reservations, 0).booker.salutation %}geehrter{% else %}geehrte{% endif %} {{ attribute(reservations, 0).booker.salutation}} {{ attribute(reservations, 0).booker.lastname}},</p>
+
+<p>wir bedanken uns für Ihre Buchung. Im Anhang erhalten Sie die Zimmerreservierungsbestätigung mit <strong>allen wichtigen Informationen</strong>.</p>
+
+<p>Mit freundlichen Grüßen</p>
+

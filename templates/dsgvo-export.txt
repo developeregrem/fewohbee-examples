@@ -1,0 +1,116 @@
+<style type="text/css">
+body {
+    font-size: 12px;
+    color: #000000;
+    font-family: "Arial", Helvetica, Arial, sans-serif;
+}
+
+.general {
+    border-collapse: collapse;
+    border: 0;
+    border-spacing: 0;
+    width: 100%;
+}
+
+.general td {
+    padding: 4px;
+    vertical-align: top;
+}
+
+.general .first {
+    width: 25%;
+}
+
+h1 {
+    margin: 0;
+    color: #333333;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-bold {
+    font-weight: bold;
+}
+
+.clear {
+    clear: both;
+    height: 0;
+}
+</style>
+
+<h1>Allgemein</h1>
+<table class="general">
+<tr>
+  <td class="first">Name:</td>
+  <td>{{ customer.salutation }} {{ customer.firstname }} {{ customer.lastname }}</td>
+</tr>
+<tr>
+  <td class="first">Geburtsdatum:</td>
+  <td>{% if customer.birthday %} {{ customer.birthday|date('d.m.Y') }} {% endif %}</td>
+</tr>
+<tr>
+  <td class="first">Bemerkung:</td>
+  <td>{% if customer.remark %}{{ customer.remark|nl2br }}{% else %} -{% endif %}</td>
+</tr>
+</table>
+
+<h1>Adressen</h1>
+
+{% for address in customer.customerAddresses %}                              
+<h6 class="panel-title">{{ 'customer.contact'|trans }} ({{ address.type|trans }})</h6>
+<table class="general">   
+{% if address.company %} 
+<tr>
+  <td class="first">{{ 'customer.company'|trans }}:</td>
+  <td>{{ address.company }}</td>
+</tr>  
+{% endif %} 
+<tr>
+  <td class="first">{{ 'reservation.preview.customer.address'|trans }}:</td>
+  <td>{{ address.address }}<br>{{ address.zip }} {{ address.city }}<br />{{ address.country }}</td>
+</tr> 
+<tr>
+  <td class="first">{{ 'customer.email'|trans }}:</td>
+  <td>{% if address.email %}{{ address.email }}{% else %} -{% endif %}</td>
+</tr> 
+<tr>
+  <td class="first">{{ 'customer.phone'|trans }}:</td>
+  <td>{% if address.phone %}{{ address.phone }}{% else %} -{% endif %}</td>
+</tr>
+<tr>
+  <td class="first">{{ 'customer.fax'|trans }}:</td>
+  <td>{% if address.fax %}{{ address.fax }}{% else %} -{% endif %}</td>
+</tr>
+<tr>
+  <td class="first">{{ 'customer.mobilephone'|trans }}:</td>
+  <td>{% if address.mobilephone %}{{ address.mobilephone }}{% else %} -{% endif %}</td>
+</tr>
+</table>                                                 
+{% endfor %}
+
+<h1>Übernachtungen</h1>
+
+{% for reservation in customer.reservations %}   
+<h6>{{ reservation.startDate|date('d.m.Y') }} - {{ reservation.endDate|date('d.m.Y') }} ({{ reservation.appartment.description }})</h6>
+
+<table class="general">   
+<tr>
+  <td class="first">Gebucht über:</td>
+  <td>{{ reservation.reservationOrigin.name }}</td>
+</tr> 
+<tr>
+  <td class="first">Anzahl Personen:</td>
+  <td>{{ reservation.persons }}</td>
+</tr> 
+<tr>
+  <td class="first">Rechnungen:</td>
+  <td>{% for invoice in reservation.invoices %}{{ invoice.number }} ({{ invoice.date|date('d.m.Y') }}){%if not loop.last %}, {% endif %}{% endfor %}</td>
+</tr>  
+</table>
+{% endfor %}

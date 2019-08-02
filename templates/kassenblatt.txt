@@ -1,0 +1,112 @@
+<style type="text/css">
+body {
+    font-size: 12px;
+    color: #000000;
+    font-family: "Arial", Helvetica, Arial, sans-serif;
+}
+
+.table-positions {
+    border-collapse: collapse;
+    border: 0;
+    border-spacing: 0;
+    width: 100%;
+}
+
+.table-positions th {
+    border-left: 1px solid #DDDDDD;
+    border-bottom: 1px solid #333333;
+    padding: 8px 4px 8px 4px;
+}
+
+
+
+.table-positions td {
+    border-bottom: 1px solid #DDDDDD;
+    border-left: 1px solid #DDDDDD;
+    padding: 4px;
+}
+
+.table-positions .first {
+    border-left: 0;
+}
+
+.table-cashs {
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 50%;
+    margin-top: 10px;
+    color: #555555;
+}
+
+.table-cashs td {
+    text-align: right;
+    font-weight: bold;
+}
+
+h1 {
+    margin: 0;
+    color: #333333;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-bold {
+    font-weight: bold;
+}
+
+.clear {
+    clear: both;
+    height: 0;
+}
+</style>
+
+<htmlpageheader name="header">
+  <h1>Kassenblatt {{ getLocalizedMonth(journal.cashMonth, 'MMMM', app.request.locale) }} {{ journal.cashYear }}
+</htmlpageheader>
+<sethtmlpageheader name="header" value="on" show-this-page="1"></sethtmlpageheader>
+<pagefooter name="footer" content-right="{PAGENO}/{nbpg}">
+</pagefooter>
+<setpagefooter name="footer" value="on"></setpagefooter>
+<table class="table-positions">
+    <tr>
+        <th class="first">#</th>
+        <th>Einnahmen</th>
+        <th>Ausgaben</th>
+        <th>Bestand €</th>
+        <th>Gegenkto.</th>
+        <th>Rg.Nr.</th>
+        <th>Bel.Nr.</th>
+        <th>Datum</th>
+        <th>Bemerkung</th>
+    </tr>
+    {% set startIdx = 0 %}
+    {% for entry in journal.cashJournalEntries%}
+        <tr>
+            <td class="first">{{ loop.index + startIdx }}</td>
+            <td class="text-right">{{ entry.incomes|number_format(2, ',', '.') }}</td>
+            <td class="text-right">{{ entry.expenses|number_format(2, ',', '.') }}</td>
+            <td class="text-right">{{ entry.inventory|number_format(2, ',', '.') }}</td>
+            <td>{{ entry.counterAccount }}</td>
+            <td>{{ entry.invoiceNumber }}</td>
+            <td>{{ "%04d"|format(entry.documentNumber) }}</td>
+            <td>{{ entry.date|date("d.m.Y") }}</td>
+            <td>{{ entry.remark }}</td>
+        </tr>
+    {% endfor %}
+</table>
+<table class="table-cashs" align="right">
+<tr>
+  <td>Bestand Anfang:</td>
+  <td>{{ journal.cashStart|number_format(2, ',', '.') }} €</td>
+</tr>
+<tr>
+  <td>Bestand Ende:</td>
+  <td>{{ journal.cashEnd|number_format(2, ',', '.') }} €</td>
+</tr>
+</table>
