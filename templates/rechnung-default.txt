@@ -1,179 +1,80 @@
-<style type="text/css">
-body {
-    font-size: 12px;
-    color: #000000;
-    font-family: "Arial", Helvetica, Arial, sans-serif;
-}
-
-.table-positions {
-    border-collapse: collapse;
-    border: 0;
-    border-spacing: 0;
-    width: 100%;
-}
-
-.table-positions th {
-    border-left: 1px solid #DDDDDD;
-    border-bottom: 1px solid #333333;
-    padding: 8px 4px 8px 4px;
-}
-
-.table-positions td {
-    border-bottom: 1px solid #DDDDDD;
-    border-left: 1px solid #DDDDDD;
-    padding: 4px;
-}
-
-.table-positions .last {
-    border: 0;
-}
-
-.table-positions .first {
-    border-left: 0;
-}
-
-h1 {
-    margin: 0;
-    color: #333333;
-}
-
-.text-right {
-    text-align: right;
-}
-
-.text-center {
-    text-align: center;
-}
-
-.text-bold {
-    font-weight: bold;
-}
-
-.left {
-    float: left;
-    widt: 50%;
-}
-.right {
-    float: right;
-    width: 50%;
-}
-.clear {
-    clear: both;
-    height: 0;
-}
-</style>
-<htmlpageheader name="header">
-  <h1>Rechnung</h1>
-</htmlpageheader>
-<sethtmlpageheader name="header" value="on" show-this-page="1"></sethtmlpageheader>
-<div class="left">
-  {{ invoice.firstname }} {{ invoice.lastname }}<br />
-  {% if invoice.company is not empty %}
-    {{ invoice.company }}<br />
-  {% endif %}
-  {{ invoice.address }}<br />
-  {{ invoice.zip }} {{ invoice.city }}<br />
-</div>
-<div class="right text-right">
-  <strong>{{ 'invoice.number'|trans }}</strong><br />
-  {{ invoice.number }}<br />
-  <strong>{{ 'invoice.date'|trans }}</strong><br />
-  {{ invoice.date|date('d.m.Y') }}
-</div>
-            <p class="clear"> </p>
-            <table class="table-positions">
-                <tr>
-                    <th class="first">{{ 'invoice.position.appartment'|trans }}</th>
-                    <th class="text-right">{{ 'invoice.position.stays'|trans }}</th>
-                    <th class="text-right">{{ 'invoice.price.single'|trans }}</th>
-                    <th class="text-right">{{ 'invoice.vat'|trans }}</th>
-                    <th class="text-right">{{ 'invoice.price.total'|trans }}</th>
-                </tr>
-                {% set appartmentSum = 0 %}
-                {% for appartment in invoice.appartments %}
-                    {% set appartmentSum = appartmentSum + (appartment.price * appartment.amount) %}
-                    <tr>
-                        <td class="first">{{ appartment.description }} ({{ 'invoice.appartment.persons'|trans({'%count%': appartment.persons }) }})
-                            <br/>{{ appartment.startDate|date('d.m.Y') }}
-                            - {{ appartment.endDate|date('d.m.Y') }}</td>
-                        <td class="text-right">{{ appartment.amount }}</td>
-                        <td class="text-right">{{ appartment.price|number_format(2, ',', '.') }} €</td>
-                        <td class="text-right">
-                            {% if is_decimal_place_0(appartment.vat) %}
-                                {{ appartment.vat|number_format(0, ',', '.') }} %
-                            {% else %}
-                                {{ appartment.vat|number_format(2, ',', '.') }} %
-                            {% endif %}
-                        </td>
-                        <td class="text-right">{{ (appartment.price * appartment.amount)|number_format(2, ',', '.') }} €</td>
-                    </tr>
-                {% endfor %}
-                <tr>
-                    <td colspan="5" class="last text-bold text-right">{{ appartmentSum|number_format(2, ',', '.') }} €</td>
-                </tr>
-            </table>
-            <p></p>
-            <table class="table-positions">
-                <tr>
-                    <th class="first">{{ 'invoice.position.additional'|trans }}</th>
-                    <th class="text-right">{{ 'invoice.position.amount'|trans }}</th>
-                    <th class="text-right">{{ 'invoice.price.single'|trans }}</th>
-                    <th class="text-right">{{ 'invoice.vat'|trans }}</th>
-                    <th class="text-right">{{ 'invoice.price.total'|trans }}</th>
-                </tr>
-                {% set positionSum = 0 %}
-                {% for position in invoice.positions %}
-                    {% set positionSum = positionSum + (position.price * position.amount) %}
-                    <tr>
-                        <td class="first">{{ position.description }}</td>
-                        <td class="text-right">{{ position.amount }}</td>
-                        <td class="text-right">{{ position.price|number_format(2, ',', '.') }} €</td>
-                        <td class="text-right">
-                            {% if is_decimal_place_0(position.vat) %}
-                                {{ position.vat|number_format(0, ',', '.') }} %
-                            {% else %}
-                                {{ position.vat|number_format(2, ',', '.') }} %
-                            {% endif %}
-                        </td>
-                        <td class="text-right">{{ (position.price * position.amount)|number_format(2, ',', '.') }} €</td>
-                    </tr>
-                {% endfor %}
-                <tr>
-                    <th colspan="5" class="last text-right">{{ positionSum|number_format(2, ',', '.') }} €</th>
-                </tr>
-            </table>
- <br /> <br />
-<div style="width: 100%">          
-<div style="float: left; width: 50%;">{{ 'invoice.containing.vat'|trans }}<br/>
-  <table>
-    {% for key, value in vats %}
-    <tr>
-        <td class="text-right">
-         {% if is_decimal_place_0(key) %}
-             {{ key|number_format(0, ',', '.') }}
-         {% else %}
-             {{ key|number_format(2, ',', '.') }}
-         {% endif %} %:
-        </td>
-        <td>  </td>
-        <td class="text-right">{{ value.netto|number_format(2, ',', '.') }} €</td>
-    ´</tr>
-     {% endfor %}
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<p><span style="font-size: 18pt; font-family: arial, helvetica, sans-serif;"><strong>Rechnung</strong></span></p>
+<p><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;"><span class="mceNonEditable">[[invoice.firstname]]</span> <span class="mceNonEditable">[[invoice.lastname]]</span><br /><span class="mceNonEditable">[[invoice.company]]</span><br /><span class="mceNonEditable">[[invoice.address]]</span><br /><span class="mceNonEditable">[[invoice.zip]]</span> <span class="mceNonEditable">[[invoice.city]]</span><br /></span></p>
+<p style="text-align: right;"><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;"><strong>Rechnungsnr.</strong><br /><span class="mceNonEditable">[[invoice.number]]</span><br /><strong>Rechnungsdatum</strong><br /><span class="mceNonEditable">[[invoice.date|date('d.m.Y')]]</span><br /></span></p>
+<p style="text-align: left;"> </p>
+<table style="border-collapse: collapse; width: 100%;">
+<tbody>
+<tr>
+<th style="border-right: 1px solid #DDDDDD; border-bottom: 1px solid #333333;"><span style="font-family: arial, helvetica, sans-serif; font-size: 10pt;">Zimmer</span></th>
+<th style="text-align: right; border-right: 1px solid #DDDDDD; border-bottom: 1px solid #333333;"><span style="font-family: arial, helvetica, sans-serif; font-size: 10pt;">Übernachtungen</span></th>
+<th style="text-align: right; border-right: 1px solid #DDDDDD; border-bottom: 1px solid #333333;"><span style="font-family: arial, helvetica, sans-serif; font-size: 10pt;">Einzelpreis</span></th>
+<th style="text-align: right; border-right: 1px solid #DDDDDD; border-bottom: 1px solid #333333;"><span style="font-family: arial, helvetica, sans-serif; font-size: 10pt;">MwSt.</span></th>
+<th style="text-align: right; border-bottom: 1px solid #333333;"><span style="font-family: arial, helvetica, sans-serif; font-size: 10pt;">Gesamt</span></th>
+</tr>
+<!-- [% for appartment in invoice.appartments %] -->
+<tr style="border-bottom: 1px solid #DDDDDD;">
+<td style="border-right: 1px solid #DDDDDD;"><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;"><span class="mceNonEditable">[[appartment.description]]</span> (Personen: <span class="mceNonEditable">[[appartment.persons]]</span>)</span><br /><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;"><span class="mceNonEditable">[[appartment.startDate|date('d.m.Y')]]</span> - <span class="mceNonEditable">[[appartment.endDate|date('d.m.Y')]]</span></span></td>
+<td style="text-align: right; border-right: 1px solid #DDDDDD;"><span class="mceNonEditable" style="font-size: 10pt; font-family: arial, helvetica, sans-serif;">[[appartment.amount]]</span></td>
+<td style="text-align: right; border-right: 1px solid #DDDDDD;"><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;"><span class="mceNonEditable">[[appartment.priceFormated]]</span> €</span></td>
+<td style="text-align: right; border-right: 1px solid #DDDDDD;"><span class="mceNonEditable" style="font-size: 10pt; font-family: arial, helvetica, sans-serif;">[[appartment.vat]]</span></td>
+<td style="text-align: right;"><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;"><span class="mceNonEditable">[[appartment.totalPrice]]</span> €</span></td>
+</tr>
+<!-- [% endfor %] -->
+<tr>
+<td style="text-align: right;" colspan="5"><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;"><span class="mceNonEditable"><strong>[[appartmentTotal]]</strong></span><strong> €</strong></span></td>
+</tr>
+</tbody>
 </table>
-</div>
-<div class="text-right" style="float: right; width: 50%;">
-    <div style="float: right; width: 25%;">
-        {{ (brutto-netto)|number_format(2, ',', '.') }} €<br/>
-        <strong>{{ brutto|number_format(2, ',', '.') }} €</strong>
-    </div>
-    <div style="float: right; width: 25%;">
-        {{ 'invoice.netto'|trans }}<br />
-        <strong>{{ 'invoice.brutto'|trans }}</strong>
-    </div>
-</div>
-</div>
-<br/>
-<div>
-    <h4>{{ 'invoice.remark'|trans }}</h4>
-    <div class="text-muted">{%if invoice.remark %}{{ invoice.remark|nl2br }}{% else %}-{% endif%}</div>
-</div>
+<p style="text-align: left;"> </p>
+<table style="border-collapse: collapse; width: 100%;">
+<tbody>
+<tr style="border-bottom: 1px solid #333333;">
+<th style="border-right: 1px solid #DDDDDD; border-bottom: 1px solid #333333;"><span style="font-family: arial, helvetica, sans-serif; font-size: 10pt;">weitere Leistungen</span></th>
+<th style="text-align: right; border-right: 1px solid #DDDDDD; border-bottom: 1px solid #333333;"><span style="font-family: arial, helvetica, sans-serif; font-size: 10pt;">Anzahl</span></th>
+<th style="text-align: right; border-right: 1px solid #DDDDDD; border-bottom: 1px solid #333333;"><span style="font-family: arial, helvetica, sans-serif; font-size: 10pt;">Einzelpreis</span></th>
+<th style="text-align: right; border-right: 1px solid #DDDDDD; border-bottom: 1px solid #333333;"><span style="font-family: arial, helvetica, sans-serif; font-size: 10pt;">MwSt.</span></th>
+<th style="text-align: right; border-bottom: 1px solid #333333;"><span style="font-family: arial, helvetica, sans-serif; font-size: 10pt;">Gesamt</span></th>
+</tr>
+<!-- [% for position in invoice.positions %] -->
+<tr style="border-bottom: 1px solid #DDDDDD;">
+<td style="border-right: 1px solid #DDDDDD;"><span class="mceNonEditable" style="font-size: 10pt; font-family: arial, helvetica, sans-serif;">[[position.description]]</span></td>
+<td style="text-align: right; border-right: 1px solid #DDDDDD;"><span class="mceNonEditable" style="font-size: 10pt; font-family: arial, helvetica, sans-serif;">[[position.amount]]</span></td>
+<td style="text-align: right; border-right: 1px solid #DDDDDD;"><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;"><span class="mceNonEditable">[[position.priceFormated]]</span> €</span></td>
+<td style="text-align: right; border-right: 1px solid #DDDDDD;"><span class="mceNonEditable" style="font-size: 10pt; font-family: arial, helvetica, sans-serif;">[[position.vat]]</span></td>
+<td style="text-align: right;"><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;"><span class="mceNonEditable">[[position.totalPrice]]</span> €</span></td>
+</tr>
+<!-- [% endfor %] -->
+<tr>
+<td style="text-align: right;" colspan="5"><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;"><span class="mceNonEditable"><strong>[[miscTotal]]</strong></span><strong> €</strong></span></td>
+</tr>
+</tbody>
+</table>
+<p> </p>
+<table style="border-collapse: collapse; width: 100%;" border="0">
+<tbody>
+<tr>
+<td style="width: 33.3333%;"><span style="font-size: 10pt;">enthaltene Mehrwertsteuer<br /></span><br />
+<table border="0"><!-- [% for key, value in vats %] -->
+<tbody>
+<tr>
+<td style="text-align: right;"><span class="mceNonEditable" style="font-size: 10pt;">[[key]] %:</span></td>
+<td style="text-align: right;"><span class="mceNonEditable" style="font-size: 10pt;"> [[value.nettoFormated]] €</span></td>
+</tr>
+<!-- [% endfor %] --></tbody>
+</table>
+<span style="font-size: 10pt;"><br /></span></td>
+<td style="width: 47.7411%; text-align: right; vertical-align: top;"><span style="font-size: 12pt;">Netto</span><br /><span style="font-size: 12pt;"><strong>Brutto</strong></span></td>
+<td style="width: 18.9255%; text-align: right; vertical-align: top;"><span style="font-size: 12pt;"><span class="mceNonEditable">[[nettoFormated]] </span>€</span><br /><span style="font-size: 12pt;"><strong><span class="mceNonEditable">[[bruttoFormated]] </span>€</strong></span></td>
+</tr>
+</tbody>
+</table>
+<p> </p>
+<p><span style="font-family: arial, helvetica, sans-serif; font-size: 10pt;"><strong>Bemerkungen</strong></span></p>
+<p><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;"><span class="mceNonEditable">[[invoice.remark]]</span></span></p>
+</body>
+</html>

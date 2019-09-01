@@ -1,6 +1,10 @@
-<p>Sehr {% if 'customer.mr'|trans == attribute(reservations, 0).booker.salutation %}geehrter{% else %}geehrte{% endif %} {{ attribute(reservations, 0).booker.salutation}} {{ attribute(reservations, 0).booker.lastname}},</p>
-
-<p>wir bedanken uns für Ihre Buchung. Im Anhang erhalten Sie die Zimmerreservierungsbestätigung mit <strong>allen wichtigen Informationen</strong>.</p>
-
-<p>Mit freundlichen Grüßen</p>
-
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<p><span style="font-family: arial, helvetica, sans-serif; font-size: 10pt;">Sehr geehrte/r <span class="mceNonEditable">[[reservation1.booker.salutation]] <span class="mceNonEditable">[[reservation1.booker.lastname]]</span></span>,</span></p>
+<p><span style="font-family: arial, helvetica, sans-serif; font-size: 10pt;">wir bedanken uns für Ihre Buchung. Im Anhang erhalten Sie die Zimmerreservierungsbestätigung mit <strong>allen wichtigen Informationen</strong>.</span></p>
+<p><span style="font-family: arial, helvetica, sans-serif; font-size: 10pt;">Mit freundlichen Grüßen</span></p>
+</body>
+</html>
