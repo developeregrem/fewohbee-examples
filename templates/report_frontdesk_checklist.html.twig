@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; font-size: 12px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 18px; }
+        th, td { border: 1px solid #000; padding: 6px; vertical-align: top; }
+        th { background: #f2f2f2; text-align: left; }
+        .checkbox { width: 14px; height: 14px; border: 1px solid #000; display: inline-block; }
+        .section-title { font-weight: bold; margin: 14px 0 6px; }
+        .muted { color: #666; font-size: 11px; }
+    </style>
+</head>
+<body>
+    <div>
+    <htmlpageheader name="MyHeader1">
+        <div class="muted" style="text-align: center">
+            {% set period = filters.start|date('d.m.Y') %}
+            {% if filters.start != filters.end %}
+                {% set period = period ~ ' - ' ~ (filters.end|date('d.m.Y')) %}
+            {% endif %}
+            {{ period }}
+            {% for type in filters.occupancyTypes %}
+                | {{ occupancyLabels[type]|trans({}, 'Housekeeping') }}
+            {% endfor %}
+            {% if filters.subsidiary %}
+                | {{ filters.subsidiary.name }}
+            {% else %}
+                | alle Niederlassungen
+            {% endif %}
+            | Erzeugt {{ "now"|date('d.m.Y H:i') }}
+        </div>
+    </htmlpageheader>
+    <htmlpagefooter name="MyFooter1">
+        <div class="muted" style="text-align: right; font-size: 10px;">
+            Seite {PAGENO} von {nbpg}
+        </div>
+    </htmlpagefooter>
+    <sethtmlpageheader name="MyHeader1" value="on" show-this-page="1"></sethtmlpageheader>
+    <sethtmlpagefooter name="MyFooter1" value="on" page="ALL"></sethtmlpagefooter>
+    </div>
+    
+    <h2>Rezeption Checkliste</h2>
+    <div>
+    {% set dayKey = filters.start|date('Y-m-d') %}
+
+    {% set dayView = dayViews[dayKey] ?? null %}
+    {% set rows = dayView ? dayView.rows : [] %}
+
+    {% set sections = {
+        'Anreisen': 'arrival',
+        'Abreisen': 'departure',
+        'Bleibt': 'inhouse'
+    } %}
+    </div>
+    {% for title, mode in sections %}
+        <div class="section-title">{{ title }}</div>
+        <table>
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Personen</th>
+                <th>Zimmer</th>
+                <th>Zeitraum</th>
+                <th>Rechnungsstatus</th>
+                <th>Meldeschein</th>
+                <th>Schluessel</th>
+                <th>Rechnung</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% set hasRows = false %}
+            {% for row in rows %}
+                {% for reservation in row.apartmentReservations %}
+                    {% set startKey = reservation.startDate|date('Y-m-d') %}
+                    {% set endKey = reservation.endDate|date('Y-m-d') %}
+                    {% if (mode == 'arrival' and startKey == dayKey)
+                        or (mode == 'departure' and endKey == dayKey)
+                        or (mode == 'inhouse' and startKey < dayKey and endKey > dayKey) %}
+                        {% set hasRows = true %}
+                        {% set guestNames = [] %}
+                        {% for customer in reservation.customers %}
+                            {% set name = (customer.lastname ~ ' ' ~ customer.firstname)|trim %}
+                            {% if name != '' %}
+                                {% set guestNames = guestNames|merge([name]) %}
+                            {% endif %}
+                        {% endfor %}
+                        {% if guestNames is empty and reservation.booker %}
+                            {% set name = (reservation.booker.lastname ~ ' ' ~ reservation.booker.firstname)|trim %}
+                            {% if name != '' %}
+                                {% set guestNames = [name] %}
+                            {% endif %}
+                        {% endif %}
+
+                        {% set invoiceStatus = '-' %}
+                        {% set firstInvoice = reservation.invoices|first %}
+                        {% if firstInvoice %}
+                            {% set statusKey = invoiceStatusLabels[firstInvoice.status] ?? null %}
+                            {% if statusKey %}
+                                {% set invoiceStatus = statusKey|trans %}
+                            {% endif %}
+                        {% endif %}
+
+                        <tr>
+                            <td>{{ guestNames|join(', ') ?: '-' }}</td>
+                            <td>{{ reservation.persons ?? '-' }}</td>
+                            <td>{{ row.apartment ? row.apartment.number : '-' }}</td>
+                            <td>{{ reservation.startDate|date('d.m.Y') }} - {{ reservation.endDate|date('d.m.Y') }}</td>
+                            <td>{{ invoiceStatus }}</td>
+                            <td><span class="checkbox"></span></td>
+                            <td><span class="checkbox"></span></td>
+                            <td><span class="checkbox"></span></td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+            {% if not hasRows %}
+                <tr>
+                    <td colspan="8">-</td>
+                </tr>
+            {% endif %}
+            </tbody>
+        </table>
+    {% endfor %}
+</body>
+</html>

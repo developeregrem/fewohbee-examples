@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; font-size: 12px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #000; padding: 6px; vertical-align: top; }
+        th { background: #f2f2f2; text-align: left; }
+        .room { font-weight: bold; }
+        .muted { color: #666; font-size: 11px; }
+    </style>
+</head>
+<body>
+    <div>
+    <htmlpageheader name="MyHeader1">
+        <div class="muted" style="text-align: center">
+            {% set period = filters.start|date('d.m.Y') %}
+            {% if filters.start != filters.end %}
+                {% set period = period ~ ' - ' ~ (filters.end|date('d.m.Y')) %}
+            {% endif %}
+            {{ period }}
+            {% for type in filters.occupancyTypes %}
+                | {{ occupancyLabels[type]|trans({}, 'Housekeeping') }}
+            {% endfor %}
+            {% if filters.subsidiary %}
+                | {{ filters.subsidiary.name }}
+            {% else %}
+                | alle Niederlassungen
+            {% endif %}
+            | Erzeugt {{ "now"|date('d.m.Y H:i') }}
+        </div>
+    </htmlpageheader>
+    <htmlpagefooter name="MyFooter1">
+        <div class="muted" style="text-align: right; font-size: 10px;">
+            Seite {PAGENO} von {nbpg}
+        </div>
+    </htmlpagefooter>
+    <sethtmlpageheader name="MyHeader1" value="on" show-this-page="1"></sethtmlpageheader>
+    <sethtmlpagefooter name="MyFooter1" value="on" page="ALL"></sethtmlpagefooter>
+    </div>
+    
+    <h2>Frühstück Checkliste</h2>
+    <div>
+    {% set visibleApartmentIds = [] %}
+    {% for dayView in dayViews %}
+        {% for row in dayView.rows %}
+            {% set apartmentId = row.apartment.id %}
+            {% if apartmentId not in visibleApartmentIds %}
+                {% set visibleApartmentIds = visibleApartmentIds|merge([apartmentId]) %}
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+    </div>
+    <table>
+        <thead>
+        <tr>
+            <th>Zimmer</th>
+            <th>Gäste</th>
+            {% for day in rangeView.days %}
+                <th>{{ day|date('d.m') }}</th>
+            {% endfor %}
+        </tr>
+        </thead>
+        <tbody>
+        {% for apartment in rangeView.apartments %}
+            {% if apartment.id in visibleApartmentIds %}
+            {% set guestNames = [] %}
+            {% for reservation in reservations %}
+                {% if reservation.appartment and reservation.appartment.id == apartment.id %}
+                    {% for customer in reservation.customers %}
+                        {% set name = (customer.lastname ~ ', ' ~ customer.firstname)|trim(', ') %}
+                        {% if name != '' and name not in guestNames %}
+                            {% set guestNames = guestNames|merge([name]) %}
+                        {% endif %}
+                    {% endfor %}
+                    {% if reservation.customers is empty and reservation.booker %}
+                        {% set name = (reservation.booker.lastname ~ ', ' ~ reservation.booker.firstname)|trim(', ') %}
+                        {% if name != '' and name not in guestNames %}
+                            {% set guestNames = guestNames|merge([name]) %}
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+            {% if guestNames is empty %}
+                {% set guestNames = ['-'] %}
+            {% endif %}
+            {% for guestName in guestNames %}
+                <tr>
+                    <td>{{ apartment.number }}</td>
+                    <td>{{ guestName }}</td>
+                    {% for day in rangeView.days %}
+                            <td></td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+            {% endif %}
+        {% endfor %}
+        </tbody>
+    </table>
+    
+</body>
+</html>

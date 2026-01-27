@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; font-size: 12px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #000; padding: 6px; vertical-align: top; }
+        th { background: #f2f2f2; text-align: left; }
+        .muted { color: #666; font-size: 11px; }
+    </style>
+</head>
+<body>
+    <div>
+    <htmlpageheader name="MyHeader1">
+        <div class="muted" style="text-align: center">
+            {% set period = filters.start|date('d.m.Y') %}
+            {% if filters.start != filters.end %}
+                {% set period = period ~ ' - ' ~ (filters.end|date('d.m.Y')) %}
+            {% endif %}
+            {{ period }}
+            {% for type in filters.occupancyTypes %}
+                | {{ occupancyLabels[type]|trans({}, 'Housekeeping') }}
+            {% endfor %}
+            {% if filters.subsidiary %}
+                | {{ filters.subsidiary.name }}
+            {% else %}
+                | alle Niederlassungen
+            {% endif %}
+            | Erzeugt {{ "now"|date('d.m.Y H:i') }}
+        </div>
+    </htmlpageheader>
+    <htmlpagefooter name="MyFooter1">
+        <div class="muted" style="text-align: right; font-size: 10px;">
+            Seite {PAGENO} von {nbpg}
+        </div>
+    </htmlpagefooter>
+    <sethtmlpageheader name="MyHeader1" value="on" show-this-page="1"></sethtmlpageheader>
+    <sethtmlpagefooter name="MyFooter1" value="on" page="ALL"></sethtmlpagefooter>
+    </div>
+
+    <h2>{{ 'housekeeping.title'|trans({}, 'Housekeeping') }} ({{ period }})</h2>
+    <div>
+    {% set visibleApartmentIds = [] %}
+    {% for dayView in dayViews %}
+        {% for row in dayView.rows %}
+            {% set apartmentId = row.apartment.id %}
+            {% if apartmentId not in visibleApartmentIds %}
+                {% set visibleApartmentIds = visibleApartmentIds|merge([apartmentId]) %}
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+    </div>
+    <table>
+        <thead>
+        <tr>
+            <th>{{ 'housekeeping.room'|trans({}, 'Housekeeping') }}</th>
+            {% for day in rangeView.days %}
+                <th style="width: 11%;">{{ day|date('d.m.') }}</th>
+            {% endfor %}
+        </tr>
+        </thead>
+        <tbody>
+        {% for apartment in rangeView.apartments %}
+            {% if apartment.id in visibleApartmentIds %}
+            <tr>
+                <td>{{ apartment.number }} {{ apartment.description }}</td>
+                {% for day in rangeView.days %}
+                    {% set dayKey = day|date('Y-m-d') %}
+                    {% set dayView = dayViews[dayKey] ?? null %}
+                    {% set cellRow = null %}
+                    {% if dayView %}
+                        {% for row in dayView.rows %}
+                            {% if cellRow is null and row.apartment.id == apartment.id %}
+                                {% set cellRow = row %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                    {% if cellRow %}
+                        {% set occupancyLabel = occupancyLabels[cellRow.occupancyType] ?? cellRow.occupancyType %}
+                        {% set statusValue = cellRow.status ? cellRow.status.hkStatus.value : '' %}
+                        {% set statusLabel = statusValue ? (statusLabels[statusValue] ?? statusValue) : '' %}
+                        <td>
+                            {{ occupancyLabel|trans({}, 'Housekeeping') }}
+                            {% if statusLabel %}
+                                / {{ statusLabel|trans({}, 'Housekeeping') }}
+                            {% endif %}
+                            {% if cellRow.guestCount is not null %}
+                                / {{ cellRow.guestCount }}
+                            {% endif %}
+                        </td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+            {% endif %}
+        {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

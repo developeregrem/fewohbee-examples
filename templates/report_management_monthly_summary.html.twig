@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; font-size: 12px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 18px; }
+        th, td { border: 1px solid #000; padding: 6px; vertical-align: top; }
+        th { background: #f2f2f2; text-align: left; }
+        .muted { color: #666; font-size: 11px; }
+    </style>
+</head>
+<body>
+    <div>
+    <htmlpageheader name="MyHeader1">
+        <div class="muted" style="text-align: center">
+            {% set period = filters.start|date('d.m.Y') %}
+            {% if filters.start != filters.end %}
+                {% set period = period ~ ' - ' ~ (filters.end|date('d.m.Y')) %}
+            {% endif %}
+            {{ period }}
+            {% if filters.subsidiary %}
+                | {{ filters.subsidiary.name }}
+            {% else %}
+                | alle Niederlassungen
+            {% endif %}
+            | Erzeugt {{ "now"|date('d.m.Y H:i') }}
+        </div>
+    </htmlpageheader>
+    <htmlpagefooter name="MyFooter1">
+        <div class="muted" style="text-align: right; font-size: 10px;">
+            Seite {PAGENO} von {nbpg}
+        </div>
+    </htmlpagefooter>
+    <sethtmlpageheader name="MyHeader1" value="on" show-this-page="1" />
+    <sethtmlpagefooter name="MyFooter1" value="on" page="ALL"/>
+    </div>
+
+    <h2>Monatsreport Auslastung &amp; Kennzahlen</h2>
+    <div>
+    {% set selectedYear = filters.start|date('Y') %}
+    {% set selectedMonth = filters.start|date('n') %}
+    {% set currentStats = null %}
+    {% for entry in statistics.months %}
+        {% if entry.year == selectedYear and entry.month == selectedMonth %}
+            {% set currentStats = entry.metrics %}
+        {% endif %}
+    {% endfor %}
+    {% set summary = currentStats.summary ?? {} %}
+    </div>
+    <div class="muted" style="margin-bottom: 10px;">
+        Zeitraum: {{ filters.start|date('d.m.Y') }}
+        {% if filters.start != filters.end %} - {{ filters.end|date('d.m.Y') }}{% endif %}
+    </div>
+
+    <table>
+        <tr>
+            <td>
+                <div style="padding: 10px;">
+                    <div class="muted">Reservierungen</div>
+                    <div style="font-size: 18px; font-weight: bold;">{{ summary.reservations_total ?? '-' }}</div>
+                </div>
+            </td>
+            <td>
+                <div style="padding: 10px;">
+                    <div class="muted">Gäste</div>
+                    <div style="font-size: 18px; font-weight: bold;">{{ summary.guests_total ?? '-' }}</div>
+                </div>
+            </td>
+            <td>
+                <div style="padding: 10px;">
+                    <div class="muted">Nächte</div>
+                    <div style="font-size: 18px; font-weight: bold;">{{ summary.nights_total ?? '-' }}</div>
+                </div>
+            </td>
+            <td>
+                <div style="padding: 10px;">
+                    <div class="muted">Auslastung</div>
+                    <div style="font-size: 18px; font-weight: bold;">
+                        {% if currentStats and currentStats.utilization is defined %}
+                            {{ currentStats.utilization.month_percent|number_format(1, ',', '.') }} %
+                        {% else %}
+                            -
+                        {% endif %}
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div style="padding: 10px;">
+                    <div class="muted">Anreisen</div>
+                    <div style="font-size: 18px; font-weight: bold;">{{ summary.arrivals_total ?? '-' }}</div>
+                </div>
+            </td>
+            <td>
+                <div style="padding: 10px;">
+                    <div class="muted">Abreisen</div>
+                    <div style="font-size: 18px; font-weight: bold;">{{ summary.departures_total ?? '-' }}</div>
+                </div>
+            </td>
+            <td>
+                <div style="padding: 10px;">
+                    <div class="muted">Wechsel</div>
+                    <div style="font-size: 18px; font-weight: bold;">{{ summary.turnovers_count ?? '-' }}</div>
+                </div>
+            </td>
+            <td>
+                <div style="padding: 10px;">
+                    <div class="muted">Rechnungsvolumen</div>
+                    <div style="font-size: 18px; font-weight: bold;">
+                        {% if currentStats and currentStats.turnover is defined %}
+                            {{ currentStats.turnover.total|number_format(2, ',', '.') }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <h3>Tagesverlauf</h3>
+    <table>
+        <thead>
+        <tr>
+            <th>Datum</th>
+            <th>Belegte Zimmer</th>
+            <th>Gäste inhouse</th>
+            <th>Anreisen</th>
+            <th>Abreisen</th>
+            <th>Wechsel</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for day in rangeView.days %}
+            {% if day|date('Y') == selectedYear and day|date('n') == selectedMonth %}
+                {% set dayKey = day|date('Y-m-d') %}
+                {% set dayView = dayViews[dayKey] ?? null %}
+                {% set rows = dayView ? dayView.rows : [] %}
+                {% set occupiedRooms = 0 %}
+                {% set guestsInhouse = 0 %}
+                {% set arrivals = 0 %}
+                {% set departures = 0 %}
+                {% set turnovers = 0 %}
+                {% for row in rows %}
+                    {% if row.occupancyType != 'FREE' %}
+                        {% set occupiedRooms = occupiedRooms + 1 %}
+                    {% endif %}
+                    {% if row.guestCount is not null %}
+                        {% set guestsInhouse = guestsInhouse + row.guestCount %}
+                    {% endif %}
+                    {% if row.occupancyType == 'ARRIVAL' %}
+                        {% set arrivals = arrivals + 1 %}
+                    {% elseif row.occupancyType == 'DEPARTURE' %}
+                        {% set departures = departures + 1 %}
+                    {% elseif row.occupancyType == 'TURNOVER' %}
+                        {% set arrivals = arrivals + 1 %}
+                        {% set departures = departures + 1 %}
+                        {% set turnovers = turnovers + 1 %}
+                    {% endif %}
+                {% endfor %}
+                <tr>
+                    <td>{{ day|date('d.m.Y') }}</td>
+                    <td>{{ occupiedRooms }}</td>
+                    <td>{{ guestsInhouse }}</td>
+                    <td>{{ arrivals }}</td>
+                    <td>{{ departures }}</td>
+                    <td>{{ turnovers }}</td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <h3>Top-Listen</h3>
+    <table>
+        <thead>
+        <tr>
+            <th>Top 5 Zimmer (belegte Nächte)</th>
+            <th>Top 5 längste Aufenthalte</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>
+                {% set nightsByApartment = {} %}
+                {% for day in rangeView.days %}
+                    {% if day|date('Y') == selectedYear and day|date('n') == selectedMonth %}
+                        {% set dayKey = day|date('Y-m-d') %}
+                        {% set dayView = dayViews[dayKey] ?? null %}
+                        {% if dayView %}
+                            {% for row in dayView.rows %}
+                                {% if row.occupancyType != 'FREE' %}
+                                    {% set idKey = 'a' ~ row.apartment.id %}
+                                    {% set current = nightsByApartment[idKey] ?? 0 %}
+                                    {% set nightsByApartment = nightsByApartment|merge({ (idKey): current + 1 }) %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+                {% set nightsList = [] %}
+                {% for apartment in rangeView.apartments %}
+                    {% set idKey = 'a' ~ apartment.id %}
+                    {% if nightsByApartment[idKey] is defined %}
+                        {% set nightsList = nightsList|merge([{
+                            'label': apartment.number ~ ' ' ~ apartment.description,
+                            'nights': nightsByApartment[idKey]
+                        }]) %}
+                    {% endif %}
+                {% endfor %}
+                {% set nightsList = nightsList|sort((a, b) => b.nights <=> a.nights) %}
+                {% for item in nightsList|slice(0, 5) %}
+                    {{ item.label }} ({{ item.nights }})<br>
+                {% else %}
+                    -
+                {% endfor %}
+            </td>
+            <td>
+                {% set stays = [] %}
+                {% for reservation in reservations %}
+                    {% set nights = date_difference(reservation.startDate|date('d.m.Y'), reservation.endDate|date('d.m.Y')) %}
+                    {% set stays = stays|merge([{
+                        'label': (reservation.appartment ? reservation.appartment.number : '-') ~ ' - ' ~ (reservation.booker ? reservation.booker.lastname : ''),
+                        'nights': nights
+                    }]) %}
+                {% endfor %}
+                {% set stays = stays|sort((a, b) => b.nights <=> a.nights) %}
+                {% for item in stays|slice(0, 5) %}
+                    {{ item.label }} ({{ item.nights }})<br>
+                {% else %}
+                    -
+                {% endfor %}
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h3>Reservierungsherkunft</h3>
+    <table>
+        <thead>
+        <tr>
+            <th>Herkunft</th>
+            <th>Anzahl</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% if currentStats and currentStats.reservation_origin is defined %}
+            {% for origin, count in currentStats.reservation_origin %}
+                <tr>
+                    <td>{{ origin }}</td>
+                    <td>{{ count }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="2">-</td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="2">-</td>
+            </tr>
+        {% endif %}
+        </tbody>
+    </table>
+</body>
+</html>
