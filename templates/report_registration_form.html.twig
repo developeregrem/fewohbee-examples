@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; font-size: 12px; }
+        h2 { margin: 0 0 8px; }
+        table { width: 100%; border-collapse: collapse; }
+        td, th { padding: 6px 4px; vertical-align: top; }
+        .section { margin: 12px 0 6px; font-weight: bold; }
+        .line-cell { border-bottom: 1px solid #000; height: 16px; }
+        .muted { color: #666; font-size: 11px; }
+    </style>
+</head>
+<body>
+    <div>
+    {% set reservation = reservation1 ?? (reservations is defined ? reservations|first : null) %}
+    {% set booker = reservation ? reservation.booker : null %}
+    {% set addr = address ?? null %}
+    </div>
+    <h2>Gästemeldeschein / Registration Form</h2>
+
+    <div class="section">Persönliche Angaben / Personal details</div>
+    <table>
+        <tr>
+            <td style="width: 25%">Name / Last name</td>
+            <td style="width: 25%" class="line-cell">{{ (booker ? booker.lastname : '') ?: '&nbsp;'|raw }}</td>
+            <td style="width: 25%">Vorname / First name</td>
+            <td style="width: 25%" class="line-cell">{{ (booker ? booker.firstname : '') ?: '&nbsp;'|raw }}</td>
+        </tr>
+        <tr>
+            <td>Geb.datum / Date of birth</td>
+            <td class="line-cell">{{ (booker and booker.birthday ? booker.birthday|date('d.m.Y') : '') ?: '&nbsp;'|raw }}</td>
+            <td>Geschlecht / Gender</td>
+            <td class="line-cell">{{ (booker ? booker.salutation : '') ?: '&nbsp;'|raw }}</td>
+        </tr>
+        <tr>
+            <td>Staatsangehörigkeit / Nationality</td>
+            <td class="line-cell">{{ (addr ? addr.country : '') ?: '&nbsp;'|raw }}</td>
+            <td>Ausweisnummer / ID number</td>
+            <td class="line-cell">{{ (booker ? booker.IDNumber : '') ?: '&nbsp;'|raw }}</td>
+        </tr>
+        <tr>
+            <td>Telefon / Phone (optional)</td>
+            <td class="line-cell">{{ (addr ? addr.phone : '') ?: '&nbsp;'|raw }}</td>
+            <td>E-Mail / Email (optional)</td>
+            <td class="line-cell">{{ (addr ? addr.email : '') ?: '&nbsp;'|raw }}</td>
+        </tr>
+    </table>
+
+    <div class="section">Aufenthalt / Stay</div>
+    <table>
+        <tr>
+            <td style="width: 25%">Anreise / Arrival</td>
+            <td style="width: 25%" class="line-cell">{{ (reservation ? reservation.startDate|date('d.m.Y') : '') ?: '&nbsp;'|raw }}</td>
+            <td style="width: 25%">Abreise / Departure</td>
+            <td style="width: 25%" class="line-cell">{{ (reservation ? reservation.endDate|date('d.m.Y') : '') ?: '&nbsp;'|raw }}</td>
+        </tr>
+    </table>
+
+    <div class="section">Privatanschrift / Private address</div>
+    <table>
+        <tr>
+            <td style="width: 25%">Straße / Street</td>
+            <td style="width: 75%" class="line-cell">{{ (addr ? addr.address : '') ?: '&nbsp;'|raw }}</td>
+        </tr>
+        <tr>
+            <td>PLZ / ZIP</td>
+            <td class="line-cell">{{ (addr ? addr.zip : '') ?: '&nbsp;'|raw }}</td>
+        </tr>
+        <tr>
+            <td>Ort / City</td>
+            <td class="line-cell">{{ (addr ? addr.city : '') ?: '&nbsp;'|raw }}</td>
+        </tr>
+        <tr>
+            <td>Land / Country</td>
+            <td class="line-cell">{{ (addr ? addr.country : '') ?: '&nbsp;'|raw }}</td>
+        </tr>
+    </table>
+
+    <div class="section">Rechnungsanschrift / Billing address</div>
+    <table>
+        <tr>
+            <td style="width: 35%">Firma / Company</td>
+            <td style="width: 65%" class="line-cell">{{ (addr ? addr.company : '') ?: '&nbsp;'|raw }}</td>
+        </tr>
+        <tr>
+            <td>Firmenanschrift / Company address</td>
+            <td class="line-cell">{{ '&nbsp;'|raw }}</td>
+        </tr>
+    </table>
+
+    <div class="section">Mitreisende / Accompanying guests</div>
+    <table>
+        <thead>
+        <tr>
+            <th style="text-align:left;">Name / Last name</th>
+            <th style="text-align:left;">Vorname / First name</th>
+            <th style="text-align:left;">Geburtsdatum / Date of birth</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for i in 1..4 %}
+            <tr>
+                <td class="line-cell">{{ '&nbsp;'|raw }}</td>
+                <td class="line-cell">{{ '&nbsp;'|raw }}</td>
+                <td class="line-cell">{{ '&nbsp;'|raw }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <p></p>
+    <p></p>
+    <div class="section">Unterschrift / Signature</div>
+    <table>
+        <tr>
+            <td style="width: 25%">Datum / Date</td>
+            <td style="width: 25%" class="line-cell">{{ '&nbsp;'|raw }}</td>
+            <td style="width: 25%">Unterschrift / Signature</td>
+            <td style="width: 25%" class="line-cell">{{ '&nbsp;'|raw }}</td>
+        </tr>
+    </table>
+</body>
+</html>
