@@ -16,8 +16,8 @@ table th,td {
 <p style="text-align: center;"><span style="font-size: 18pt; font-family: arial, helvetica, sans-serif;"><strong>Unterkunft zum sonnigen Gemüt</strong></span></p>
 <p style="text-align: right;"><span style="font-family: arial, helvetica, sans-serif;"><span style="font-size: 10pt;">Inhaber: Max Mustermann<br /></span><span style="font-size: 10pt;">Musterstraße 12, </span><span style="font-size: 10pt;">12345 Musterhause</span></span><br /><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;">Telefon: 123456 789, Mobil: 987654321</span></p>
 <p><span style="font-size: 16pt; font-family: arial, helvetica, sans-serif;"><strong>Rechnung</strong></span></p>
-<p><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;"><span class="mceNonEditable">[[invoice.firstname]]</span> <span class="mceNonEditable">[[invoice.lastname]]</span><br /><span class="mceNonEditable">[[invoice.company]]</span><br /><span class="mceNonEditable">[[invoice.address]]</span><br /><span class="mceNonEditable">[[invoice.zip]]</span> <span class="mceNonEditable">[[invoice.city]]</span><br /></span></p>
-<p style="text-align: right;"><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;"><strong>Rechnungsnr.</strong><br /><span class="mceNonEditable">[[invoice.number]]</span><br /><strong>Rechnungsdatum</strong><br /><span class="mceNonEditable">[[invoice.date|date('d.m.Y')]]</span><br /></span></p>
+<p><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;">[[invoice.firstname]] [[invoice.lastname]]<br />[[invoice.company]]<br />[[invoice.address]]<br />[[invoice.zip]] [[invoice.city]]<br /></span></p>
+<p style="text-align: right;"><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;"><strong>Rechnungsnr.</strong><br />[[invoice.number]]<br /><strong>Rechnungsdatum</strong><br />[[invoice.date|date('d.m.Y')]]<br /></span></p>
 <p style="text-align: left;"> </p>
 <table style="width: 100%;">
 <thead>
@@ -29,17 +29,16 @@ table th,td {
 <th style="text-align: right; border-bottom: 1px solid #333333;" scope="col"><span style="font-family: arial, helvetica, sans-serif; font-size: 10pt;">Gesamt</span></th>
 </tr>
 </thead>
-<tbody><!-- [% for appartment in invoice.appartments %] -->
-<tr>
-<td style="border-bottom: 1px solid #DDDDDD;"><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;"><span class="mceNonEditable">[[appartment.description]]</span> (Personen: <span class="mceNonEditable">[[appartment.persons]]</span>)</span><br /><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;"><span class="mceNonEditable">[[appartment.startDate|date('d.m.Y')]]</span> - <span class="mceNonEditable">[[appartment.endDate|date('d.m.Y')]]</span></span></td>
-<td style="text-align: center; border-bottom: 1px solid #DDDDDD;"><span class="mceNonEditable" style="font-size: 10pt; font-family: arial, helvetica, sans-serif;">[[appartment.amount]]</span></td>
-<td style="text-align: right; border-bottom: 1px solid #DDDDDD;"><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;"><span class="mceNonEditable">[[appartment.priceFormated]]</span> €</span></td>
-<td style="text-align: right; border-bottom: 1px solid #DDDDDD;"><span class="mceNonEditable" style="font-size: 10pt; font-family: arial, helvetica, sans-serif;">[[appartment.vat]]</span></td>
-<td style="text-align: right; border-bottom: 1px solid #DDDDDD;"><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;"><span class="mceNonEditable">[[appartment.totalPrice]]</span> €</span></td>
+<tbody>
+<tr data-repeat="invoice.appartments" data-repeat-as="appartment">
+<td style="border-bottom: 1px solid #DDDDDD;"><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;">[[appartment.description]] (Personen: [[appartment.persons]])</span><br /><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;">[[appartment.startDate|date('d.m.Y')]] - [[appartment.endDate|date('d.m.Y')]]</span></td>
+<td style="text-align: center; border-bottom: 1px solid #DDDDDD;">[[appartment.amount]]</td>
+<td style="text-align: right; border-bottom: 1px solid #DDDDDD;"><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;">[[appartment.priceFormated]] €</span></td>
+<td style="text-align: right; border-bottom: 1px solid #DDDDDD;">[[appartment.vat]]</td>
+<td style="text-align: right; border-bottom: 1px solid #DDDDDD;"><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;">[[appartment.totalPrice]] €</span></td>
 </tr>
-<!-- [% endfor %] -->
 <tr>
-<td style="text-align: right;" colspan="5"><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;"><span class="mceNonEditable"><strong>[[appartmentTotal]]</strong></span><strong> €</strong></span></td>
+<td style="text-align: right;" colspan="5"><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;"><strong>[[appartmentTotal]]</strong><strong> €</strong></span></td>
 </tr>
 </tbody>
 </table>
@@ -54,17 +53,16 @@ table th,td {
 <th style="text-align: right; border-bottom: 1px solid #333333;" scope="col"><span style="font-family: arial, helvetica, sans-serif; font-size: 10pt;">Gesamt</span></th>
 </tr>
 </thead>
-<tbody><!-- [% for position in invoice.positions %] -->
-<tr style="border-bottom: 1px solid #DDDDDD;">
-<td style="border-bottom: 1px solid #DDDDDD;"><span class="mceNonEditable" style="font-size: 10pt; font-family: arial, helvetica, sans-serif;">[[position.description]]</span></td>
-<td style="border-bottom: 1px solid #dddddd; text-align: center;"><span class="mceNonEditable" style="font-size: 10pt; font-family: arial, helvetica, sans-serif;">[[position.amount]]</span></td>
-<td style="text-align: right; border-bottom: 1px solid #DDDDDD;"><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;"><span class="mceNonEditable">[[position.priceFormated]]</span> €</span></td>
-<td style="text-align: right; border-bottom: 1px solid #DDDDDD;"><span class="mceNonEditable" style="font-size: 10pt; font-family: arial, helvetica, sans-serif;">[[position.vat]]</span></td>
-<td style="text-align: right; border-bottom: 1px solid #DDDDDD;"><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;"><span class="mceNonEditable">[[position.totalPrice]]</span> €</span></td>
+<tbody>
+<tr style="border-bottom: 1px solid #DDDDDD;" data-repeat="invoice.positions" data-repeat-as="position">
+<td style="border-bottom: 1px solid #DDDDDD;">[[position.description]]</td>
+<td style="border-bottom: 1px solid #dddddd; text-align: center;">[[position.amount]]</td>
+<td style="text-align: right; border-bottom: 1px solid #DDDDDD;"><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;">[[position.priceFormated]] €</span></td>
+<td style="text-align: right; border-bottom: 1px solid #DDDDDD;">[[position.vat]]</td>
+<td style="text-align: right; border-bottom: 1px solid #DDDDDD;"><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;">[[position.totalPrice]] €</span></td>
 </tr>
-<!-- [% endfor %] -->
 <tr>
-<td style="text-align: right;" colspan="5"><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;"><span class="mceNonEditable"><strong>[[miscTotal]]</strong></span><strong> €</strong></span></td>
+<td style="text-align: right;" colspan="5"><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;"><strong>[[miscTotal]]</strong><strong> €</strong></span></td>
 </tr>
 </tbody>
 </table>
@@ -73,17 +71,17 @@ table th,td {
 <tbody>
 <tr>
 <td style="width: 33.3333%;"><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;">enthaltene Mehrwertsteuer</span><br />
-<table border="0"><!-- [% for key, value in vats %] -->
+<table border="0">
 <tbody>
-<tr>
-<td style="text-align: right;"><span class="mceNonEditable" style="font-size: 10pt; font-family: arial, helvetica, sans-serif;">[[key]] %:</span></td>
-<td style="text-align: right;"><span class="mceNonEditable" style="font-size: 10pt; font-family: arial, helvetica, sans-serif;"> [[value.nettoFormated]] €</span></td>
+<tr data-repeat="vats" data-repeat-key="key" data-repeat-as="value">
+<td style="text-align: right;">[[key]] %:</td>
+<td style="text-align: right;"> [[value.nettoFormated]] €</td>
 </tr>
-<!-- [% endfor %] --></tbody>
+</tbody>
 </table>
 <span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;"><br /></span></td>
 <td style="width: 47.7411%; text-align: right; vertical-align: top;"><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;">Netto</span><br /><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;"><strong>Brutto</strong></span></td>
-<td style="width: 18.9255%; text-align: right; vertical-align: top;"><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;"><span class="mceNonEditable">[[nettoFormated]] </span>€</span><br /><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;"><strong><span class="mceNonEditable">[[bruttoFormated]] </span>€</strong></span></td>
+<td style="width: 18.9255%; text-align: right; vertical-align: top;"><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;">[[nettoFormated]] €</span><br /><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;"><strong>[[bruttoFormated]] €</strong></span></td>
 </tr>
 </tbody>
 </table>
@@ -91,7 +89,7 @@ table th,td {
 <p><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;">Zahlbar nach Erhalt der Rechnung.</span></p>
 <p> </p>
 <p><span style="font-family: arial, helvetica, sans-serif; font-size: 10pt;"><strong>Bemerkungen</strong></span></p>
-<p><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;"><span class="mceNonEditable">[[invoice.remark]]</span></span></p>
+<p><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;">[[invoice.remark]]</span></p>
 <div class="footer">
 <p style="text-align: center;"><span style="font-family: arial, helvetica, sans-serif; font-size: 10pt;">Wie hoffen, Sie hatten einen angenehmen Aufenthalt. Bitte denken Sie gerne an die Tage in unserem Haus zurück. Auf Wiedersehen!<br /><br /></span></p>
 <table style="border-collapse: collapse; width: 100%;" border="0">

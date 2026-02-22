@@ -3,7 +3,7 @@
 <head>
 </head>
 <body>
-<p><span style="font-family: arial, helvetica, sans-serif; font-size: 10pt;">Sehr geehrte/r <span class="mceNonEditable">[[reservation1.booker.salutation]] <span class="mceNonEditable">[[reservation1.booker.lastname]]</span></span>,</span></p>
+<p><span style="font-family: arial, helvetica, sans-serif; font-size: 10pt;">Sehr geehrte/r [[reservation1.booker.salutation]] [[reservation1.booker.lastname]],</span></p>
 <p><span style="font-family: arial, helvetica, sans-serif; font-size: 10pt;">wir bedanken uns für Ihre Buchung. Im Anhang erhalten Sie die Zimmerreservierungsbestätigung mit <strong>allen wichtigen Informationen</strong>.</span></p>
 <p><span style="font-family: arial, helvetica, sans-serif; font-size: 10pt;">Mit freundlichen Grüßen</span></p>
 </body>

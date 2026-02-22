@@ -1,47 +1,41 @@
-<!DOCTYPE html>
-<html>
-<head>
-<style type="text/css">
-table th {
-    padding: 8px 2px 8px 2px;
-}
-table td {
-    padding: 4px;
-}
+<style>
+    table {
+    border-spacing: 0;
+    border-collapse: collapse; 
+    }
+    table th,td {
+    padding-right: 5px;
+    padding-left: 5px;
+    }
 </style>
-</head>
-<body>
 <p><span style="font-family: arial, helvetica, sans-serif; font-size: 11pt;">Mein Hotel</span><br /><span style="font-family: arial, helvetica, sans-serif; font-size: 11pt;">Hotelstraße 1</span><br /><span style="font-family: arial, helvetica, sans-serif; font-size: 11pt;">123456 Hotelhausen</span></p>
 <p> </p>
-<p><span class="mceNonEditable" style="font-family: arial, helvetica, sans-serif; font-size: 11pt;">[[reservation1.booker.salutation]] <span class="mceNonEditable">[[reservation1.booker.firstname]] </span><span class="mceNonEditable">[[reservation1.booker.lastname]]<br /><span class="mceNonEditable">[[address.address]]<br /><span class="mceNonEditable">[[address.zip]] <span class="mceNonEditable">[[address.city]]</span></span></span></span></span></p>
+<p><span style="font-family: arial, helvetica, sans-serif; font-size: 11pt;">[[reservation1.booker.salutation]] [[reservation1.booker.firstname]] [[reservation1.booker.lastname]]<br />[[address.address]]<br />[[address.zip]] [[address.city]]</span></p>
 <p> </p>
 <p> </p>
-<p><span style="font-family: arial, helvetica, sans-serif; font-size: 11pt;"><strong>Reserverierungsbestätigung</strong></span></p>
-<table border="0">
+<p><span style="font-family: arial, helvetica, sans-serif; font-size: 11pt;"><strong>Reservierungsbestätigung</strong></span></p>
+<table style="width: 100%;">
 <tbody>
-<tr>
-<th style="text-align: left;"><span style="font-size: 11pt; font-family: arial, helvetica, sans-serif;">Von</span></th>
-<th style="text-align: left;"><span style="font-size: 11pt; font-family: arial, helvetica, sans-serif;">Bis</span></th>
-<th style="text-align: left;"><span style="font-size: 11pt; font-family: arial, helvetica, sans-serif;">Zimmer</span></th>
-<th style="text-align: left;"><span style="font-size: 11pt; font-family: arial, helvetica, sans-serif;">Personen</span></th>
-<th style="text-align: left;"><span style="font-size: 11pt; font-family: arial, helvetica, sans-serif;">Preis</span></th>
+<tr style="background-color: #ced4d9;">
+<th style="border-bottom: 1px solid #333333; text-align: left;" scope="col"><span style="font-size: 11pt; font-family: arial, helvetica, sans-serif;">Von</span></th>
+<th style="border-bottom: 1px solid #333333; text-align: left;" scope="col"><span style="font-size: 11pt; font-family: arial, helvetica, sans-serif;">Bis</span></th>
+<th style="border-bottom: 1px solid #333333; text-align: left;" scope="col"><span style="font-size: 11pt; font-family: arial, helvetica, sans-serif;">Zimmer</span></th>
+<th style="border-bottom: 1px solid #333333; text-align: left;" scope="col"><span style="font-size: 11pt; font-family: arial, helvetica, sans-serif;">Personen</span></th>
+<th style="border-bottom: 1px solid #333333; text-align: left;" scope="col"><span style="font-size: 11pt; font-family: arial, helvetica, sans-serif;">Preis</span></th>
 </tr>
-<!-- [% for position in apartmentPositions %] -->
-<tr>
-<td><span class="mceNonEditable" style="font-size: 11pt; font-family: arial, helvetica, sans-serif;">[[position.startDate|date('d.m.Y')]]</span></td>
-<td><span class="mceNonEditable" style="font-size: 11pt; font-family: arial, helvetica, sans-serif;">[[position.endDate|date('d.m.Y')]]</span></td>
-<td><span class="mceNonEditable" style="font-size: 11pt; font-family: arial, helvetica, sans-serif;">[[position.description]]</span></td>
-<td><span class="mceNonEditable" style="font-size: 11pt; font-family: arial, helvetica, sans-serif;">[[position.persons]]</span></td>
+<tr data-repeat="apartmentPositions" data-repeat-as="position">
+<td><span style="font-size: 11pt; font-family: arial, helvetica, sans-serif;">[[position.startDate|date('d.m.Y')]]</span></td>
+<td><span style="font-size: 11pt; font-family: arial, helvetica, sans-serif;">[[position.endDate|date('d.m.Y')]]</span></td>
+<td><span style="font-size: 11pt; font-family: arial, helvetica, sans-serif;">[[position.description]]</span></td>
+<td><span style="font-size: 11pt; font-family: arial, helvetica, sans-serif;">[[position.persons]]</span></td>
 <td><span style="font-size: 11pt; font-family: arial, helvetica, sans-serif;">[[position.totalPrice]] €</span></td>
 </tr>
-<!-- [% endfor %] --></tbody>
+</tbody>
 </table>
-<p><span style="font-family: arial, helvetica, sans-serif; font-size: 11pt;"><!-- [% for position in miscPositions %] --><span class="mceNonEditable">[[position.description]]</span>: <span class="mceNonEditable">[[position.totalPrice]]</span> €<br /><!-- [% endfor %] --></span></p>
-<p><span style="font-family: arial, helvetica, sans-serif; font-size: 11pt;"><strong>Gesamt: <span class="mceNonEditable">[[totalPrice]]</span> €<br /></strong></span></p>
-<p><span style="font-family: arial, helvetica, sans-serif; font-size: 11pt;">Sehr geehrte/r <span class="mceNonEditable">[[reservation1.booker.salutation]] <span class="mceNonEditable">[[reservation1.booker.lastname]],</span></span></span></p>
-<p><span style="font-size: 11pt; font-family: arial, helvetica, sans-serif;">gerne bestätigen wir Ihnen hiermit oben genannte Zimmerreservierung.</span><br /><span style="font-size: 11pt; font-family: arial, helvetica, sans-serif;">Der Preis pro Zimmer / Übernachtung beinhaltet Frühstücksbüfett, Service und Mehrwertsteuer.</span></p>
+<p style="font-family: arial, helvetica, sans-serif; font-size: 11pt;"><span data-repeat="miscPositions" data-repeat-as="position">[[position.description]]: [[position.totalPrice]] €<br /></span></p>
+<p style="font-family: arial, helvetica, sans-serif; font-size: 11pt;"><strong>Gesamt: [[totalPrice]] €<br /></strong></p>
+<p style="font-family: arial, helvetica, sans-serif; font-size: 11pt;">Sehr geehrte/r [[reservation1.booker.salutation]] [[reservation1.booker.lastname]],</p>
+<p style="font-size: 11pt; font-family: arial, helvetica, sans-serif;">gerne bestätigen wir Ihnen hiermit oben genannte Zimmerreservierung.<br />Der Preis pro Zimmer / Übernachtung beinhaltet Frühstücksbüfett, Service und Mehrwertsteuer.</p>
 <p> </p>
 <p><span style="font-size: 11pt; font-family: arial, helvetica, sans-serif;">Mit freundlichen Grüßen</span></p>
 <p> </p>
-</body>
-</html>

@@ -11,30 +11,8 @@
     </style>
 </head>
 <body>
-    <div>
-    <htmlpageheader name="MyHeader1">
-        <div class="muted" style="text-align: center">
-            {% set period = filters.start|date('d.m.Y') %}
-            {% if filters.start != filters.end %}
-                {% set period = period ~ ' - ' ~ (filters.end|date('d.m.Y')) %}
-            {% endif %}
-            {{ period }}
-            {% if filters.subsidiary %}
-                | {{ filters.subsidiary.name }}
-            {% else %}
-                | alle Niederlassungen
-            {% endif %}
-            | Erzeugt {{ "now"|date('d.m.Y H:i') }}
-        </div>
-    </htmlpageheader>
-    <htmlpagefooter name="MyFooter1">
-        <div class="muted" style="text-align: right; font-size: 10px;">
-            Seite {PAGENO} von {nbpg}
-        </div>
-    </htmlpagefooter>
-    <sethtmlpageheader name="MyHeader1" value="on" show-this-page="1" />
-    <sethtmlpagefooter name="MyFooter1" value="on" page="ALL"/>
-    </div>
+    <div class="header"><div class="muted" style="text-align: center; color: #666; font-size: 11px;">[[ simple.meta.periodLabel ]]<span data-repeat="simple.meta.occupancyTypeLabelKeys" data-repeat-as="type"> | [[ occupancyLabels[type]|trans({}, 'Housekeeping') ]]</span> | [[ simple.meta.subsidiaryName ?: (simple.meta.subsidiaryAllLabelKey|trans({}, 'Housekeeping')) ]] | Erzeugt [[ simple.meta.generatedAt ]]</div></div>
+    <div class="footer"><div class="muted" style="text-align: right; font-size: 10px;">Seite {PAGENO} von {nbpg}</div></div>
 
     <h2>Monatsreport Auslastung &amp; Kennzahlen</h2>
     <div>
@@ -49,8 +27,7 @@
     {% set summary = currentStats.summary ?? {} %}
     </div>
     <div class="muted" style="margin-bottom: 10px;">
-        Zeitraum: {{ filters.start|date('d.m.Y') }}
-        {% if filters.start != filters.end %} - {{ filters.end|date('d.m.Y') }}{% endif %}
+        Zeitraum: [[ simple.meta.periodLabel ]]
     </div>
 
     <table>
@@ -58,19 +35,19 @@
             <td>
                 <div style="padding: 10px;">
                     <div class="muted">Reservierungen</div>
-                    <div style="font-size: 18px; font-weight: bold;">{{ summary.reservations_total ?? '-' }}</div>
+                    <div style="font-size: 18px; font-weight: bold;">[[ summary.reservations_total ?? '-' ]]</div>
                 </div>
             </td>
             <td>
                 <div style="padding: 10px;">
                     <div class="muted">Gäste</div>
-                    <div style="font-size: 18px; font-weight: bold;">{{ summary.guests_total ?? '-' }}</div>
+                    <div style="font-size: 18px; font-weight: bold;">[[ summary.guests_total ?? '-' ]]</div>
                 </div>
             </td>
             <td>
                 <div style="padding: 10px;">
                     <div class="muted">Nächte</div>
-                    <div style="font-size: 18px; font-weight: bold;">{{ summary.nights_total ?? '-' }}</div>
+                    <div style="font-size: 18px; font-weight: bold;">[[ summary.nights_total ?? '-' ]]</div>
                 </div>
             </td>
             <td>
@@ -78,7 +55,7 @@
                     <div class="muted">Auslastung</div>
                     <div style="font-size: 18px; font-weight: bold;">
                         {% if currentStats and currentStats.utilization is defined %}
-                            {{ currentStats.utilization.month_percent|number_format(1, ',', '.') }} %
+                            [[ currentStats.utilization.month_percent|number_format(1, ',', '.') ]] %
                         {% else %}
                             -
                         {% endif %}
@@ -90,19 +67,19 @@
             <td>
                 <div style="padding: 10px;">
                     <div class="muted">Anreisen</div>
-                    <div style="font-size: 18px; font-weight: bold;">{{ summary.arrivals_total ?? '-' }}</div>
+                    <div style="font-size: 18px; font-weight: bold;">[[ summary.arrivals_total ?? '-' ]]</div>
                 </div>
             </td>
             <td>
                 <div style="padding: 10px;">
                     <div class="muted">Abreisen</div>
-                    <div style="font-size: 18px; font-weight: bold;">{{ summary.departures_total ?? '-' }}</div>
+                    <div style="font-size: 18px; font-weight: bold;">[[ summary.departures_total ?? '-' ]]</div>
                 </div>
             </td>
             <td>
                 <div style="padding: 10px;">
                     <div class="muted">Wechsel</div>
-                    <div style="font-size: 18px; font-weight: bold;">{{ summary.turnovers_count ?? '-' }}</div>
+                    <div style="font-size: 18px; font-weight: bold;">[[ summary.turnovers_count ?? '-' ]]</div>
                 </div>
             </td>
             <td>
@@ -110,7 +87,7 @@
                     <div class="muted">Rechnungsvolumen</div>
                     <div style="font-size: 18px; font-weight: bold;">
                         {% if currentStats and currentStats.turnover is defined %}
-                            {{ currentStats.turnover.total|number_format(2, ',', '.') }}
+                            [[ currentStats.turnover.total|number_format(2, ',', '.') ]]
                         {% else %}
                             -
                         {% endif %}
@@ -161,12 +138,12 @@
                     {% endif %}
                 {% endfor %}
                 <tr>
-                    <td>{{ day|date('d.m.Y') }}</td>
-                    <td>{{ occupiedRooms }}</td>
-                    <td>{{ guestsInhouse }}</td>
-                    <td>{{ arrivals }}</td>
-                    <td>{{ departures }}</td>
-                    <td>{{ turnovers }}</td>
+                    <td>[[ day|date('d.m.Y') ]]</td>
+                    <td>[[ occupiedRooms ]]</td>
+                    <td>[[ guestsInhouse ]]</td>
+                    <td>[[ arrivals ]]</td>
+                    <td>[[ departures ]]</td>
+                    <td>[[ turnovers ]]</td>
                 </tr>
             {% endif %}
         {% endfor %}
@@ -212,7 +189,7 @@
                 {% endfor %}
                 {% set nightsList = nightsList|sort((a, b) => b.nights <=> a.nights) %}
                 {% for item in nightsList|slice(0, 5) %}
-                    {{ item.label }} ({{ item.nights }})<br>
+                    [[ item.label ]] ([[ item.nights ]])<br>
                 {% else %}
                     -
                 {% endfor %}
@@ -228,7 +205,7 @@
                 {% endfor %}
                 {% set stays = stays|sort((a, b) => b.nights <=> a.nights) %}
                 {% for item in stays|slice(0, 5) %}
-                    {{ item.label }} ({{ item.nights }})<br>
+                    [[ item.label ]] ([[ item.nights ]])<br>
                 {% else %}
                     -
                 {% endfor %}
@@ -249,8 +226,8 @@
         {% if currentStats and currentStats.reservation_origin is defined %}
             {% for origin, count in currentStats.reservation_origin %}
                 <tr>
-                    <td>{{ origin }}</td>
-                    <td>{{ count }}</td>
+                    <td>[[ origin ]]</td>
+                    <td>[[ count ]]</td>
                 </tr>
             {% else %}
                 <tr>

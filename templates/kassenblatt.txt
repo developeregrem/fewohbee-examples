@@ -11,7 +11,7 @@ table td {
 </style>
 </head>
 <body>
-<p><span style="font-family: arial, helvetica, sans-serif; font-size: 18pt;"><strong>Kassenblatt <span class="mceNonEditable">[[getLocalizedMonth(journal.cashMonth, 'MMMM', app.request.locale)]] <span class="mceNonEditable">[[journal.cashYear]]</span></span></strong></span></p>
+<p><span style="font-family: arial, helvetica, sans-serif; font-size: 18pt;"><strong>Kassenblatt <span>[[getLocalizedMonth(journal.cashMonth, 'MMMM', app.request.locale)]] <span>[[journal.cashYear]]</span></span></strong></span></p>
 <table style="border-collapse: collapse; width: 100%;" border="0" cellspacing="0px">
 <tbody>
 <tr>
@@ -25,32 +25,31 @@ table td {
 <th style="border-right: 1px solid #DDDDDD; border-bottom: 1px solid #333333;"><span style="font-family: arial, helvetica, sans-serif; font-size: 8pt;">Datum</span></th>
 <th style="border-bottom: 1px solid #333333;"><span style="font-family: arial, helvetica, sans-serif; font-size: 8pt;">Bemerkung</span></th>
 </tr>
-<!-- [% for entry in journal.cashJournalEntries %] -->
-<tr>
-<td style="border-right: 1px solid #dddddd; border-bottom: 1px solid #dddddd; text-align: center;"><span class="mceNonEditable" style="font-family: arial, helvetica, sans-serif; font-size: 8pt;">[[loop.index]]</span></td>
-<td style="border-right: 1px solid #dddddd; border-bottom: 1px solid #dddddd; text-align: right;"><span class="mceNonEditable" style="font-family: arial, helvetica, sans-serif; font-size: 8pt;">[[entry.incomesF]]</span></td>
-<td style="border-right: 1px solid #dddddd; border-bottom: 1px solid #dddddd; text-align: right;"><span class="mceNonEditable" style="font-family: arial, helvetica, sans-serif; font-size: 8pt;">[[entry.expensesF]]</span></td>
-<td style="border-right: 1px solid #dddddd; border-bottom: 1px solid #dddddd; text-align: right;"><span class="mceNonEditable" style="font-family: arial, helvetica, sans-serif; font-size: 8pt;">[[entry.inventoryF]]</span></td>
-<td style="border-right: 1px solid #DDDDDD; border-bottom: 1px solid #DDDDDD;"><span class="mceNonEditable" style="font-family: arial, helvetica, sans-serif; font-size: 8pt;">[[entry.counterAccount]]</span></td>
-<td style="border-right: 1px solid #DDDDDD; border-bottom: 1px solid #DDDDDD;"><span class="mceNonEditable" style="font-family: arial, helvetica, sans-serif; font-size: 8pt;">[[entry.invoiceNumber]]</span></td>
-<td style="border-right: 1px solid #DDDDDD; border-bottom: 1px solid #DDDDDD;"><span class="mceNonEditable" style="font-family: arial, helvetica, sans-serif; font-size: 8pt;">[[entry.documentNumberF]]</span></td>
-<td style="border-right: 1px solid #DDDDDD; border-bottom: 1px solid #DDDDDD;"><span class="mceNonEditable" style="font-family: arial, helvetica, sans-serif; font-size: 8pt;">[[entry.date|date('d.m.Y')]]</span></td>
-<td style="border-bottom: 1px solid #DDDDDD;"><span class="mceNonEditable" style="font-family: arial, helvetica, sans-serif; font-size: 8pt;">[[entry.remark]]</span></td>
+<tr data-repeat="journal.cashJournalEntries" data-repeat-as="entry">
+<td style="border-right: 1px solid #dddddd; border-bottom: 1px solid #dddddd; text-align: center;"><span style="font-family: arial, helvetica, sans-serif; font-size: 8pt;">[[loop.index]]</span></td>
+<td style="border-right: 1px solid #dddddd; border-bottom: 1px solid #dddddd; text-align: right;"><span style="font-family: arial, helvetica, sans-serif; font-size: 8pt;">[[entry.incomesF]]</span></td>
+<td style="border-right: 1px solid #dddddd; border-bottom: 1px solid #dddddd; text-align: right;"><span style="font-family: arial, helvetica, sans-serif; font-size: 8pt;">[[entry.expensesF]]</span></td>
+<td style="border-right: 1px solid #dddddd; border-bottom: 1px solid #dddddd; text-align: right;"><span style="font-family: arial, helvetica, sans-serif; font-size: 8pt;">[[entry.inventoryF]]</span></td>
+<td style="border-right: 1px solid #DDDDDD; border-bottom: 1px solid #DDDDDD;"><span style="font-family: arial, helvetica, sans-serif; font-size: 8pt;">[[entry.counterAccount]]</span></td>
+<td style="border-right: 1px solid #DDDDDD; border-bottom: 1px solid #DDDDDD;"><span style="font-family: arial, helvetica, sans-serif; font-size: 8pt;">[[entry.invoiceNumber]]</span></td>
+<td style="border-right: 1px solid #DDDDDD; border-bottom: 1px solid #DDDDDD;"><span style="font-family: arial, helvetica, sans-serif; font-size: 8pt;">[[entry.documentNumberF]]</span></td>
+<td style="border-right: 1px solid #DDDDDD; border-bottom: 1px solid #DDDDDD;"><span style="font-family: arial, helvetica, sans-serif; font-size: 8pt;">[[entry.date|date('d.m.Y')]]</span></td>
+<td style="border-bottom: 1px solid #DDDDDD;"><span style="font-family: arial, helvetica, sans-serif; font-size: 8pt;">[[entry.remark]]</span></td>
 </tr>
-<!-- [% endfor %] --></tbody>
+</tbody>
 </table>
 <table style="border-collapse: collapse; width: 100%;" border="0">
 <tbody>
 <tr>
 <td style="width: 80.4191%; text-align: right;"><span style="color: #555555; font-size: 9pt;"><strong><span style="font-family: arial, helvetica, sans-serif;">Bestand Anfang:</span></strong></span></td>
-<td style="width: 19.5809%; text-align: right;"><span style="color: #555555; font-size: 9pt;"><strong><span class="mceNonEditable" style="font-family: arial, helvetica, sans-serif;">[[journal.cashStartF]] €</span></strong></span></td>
+<td style="width: 19.5809%; text-align: right;"><span style="color: #555555; font-size: 9pt;"><strong><span style="font-family: arial, helvetica, sans-serif;">[[journal.cashStartF]] €</span></strong></span></td>
 </tr>
 <tr>
 <td style="width: 80.4191%; text-align: right;"><span style="color: #555555; font-size: 9pt;"><strong><span style="font-family: arial, helvetica, sans-serif;">Bestand Ende:</span></strong></span></td>
-<td style="width: 19.5809%; text-align: right;"><span style="color: #555555; font-size: 9pt;"><strong><span class="mceNonEditable" style="font-family: arial, helvetica, sans-serif;">[[journal.cashEndF]] €</span></strong></span></td>
+<td style="width: 19.5809%; text-align: right;"><span style="color: #555555; font-size: 9pt;"><strong><span style="font-family: arial, helvetica, sans-serif;">[[journal.cashEndF]] €</span></strong></span></td>
 </tr>
 </tbody>
 </table>
-<pagefooter name="footer" content-right="{PAGENO}/{nbpg}"></pagefooter><setpagefooter name="footer" value="on"></setpagefooter>
+<div class="footer"><span style="font-family: arial, helvetica, sans-serif; font-size: 8pt;">{PAGENO}/{nbpg}</span></div>
 </body>
 </html>

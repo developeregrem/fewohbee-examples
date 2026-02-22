@@ -11,75 +11,33 @@
     </style>
 </head>
 <body>
-    <div>
-    <htmlpageheader name="MyHeader1">
-        <div class="muted" style="text-align: center">
-            {% set period = filters.start|date('d.m.Y') %}
-            {% if filters.start != filters.end %}
-                {% set period = period ~ ' - ' ~ (filters.end|date('d.m.Y')) %}
-            {% endif %}
-            {{ period }}
-            {% for type in filters.occupancyTypes %}
-                | {{ occupancyLabels[type]|trans({}, 'Housekeeping') }}
-            {% endfor %}
-            {% if filters.subsidiary %}
-                | {{ filters.subsidiary.name }}
-            {% else %}
-                | alle Niederlassungen
-            {% endif %}
-            | Erzeugt {{ "now"|date('d.m.Y H:i') }}
-        </div>
-    </htmlpageheader>
-    <htmlpagefooter name="MyFooter1">
-        <div class="muted" style="text-align: right; font-size: 10px;">
-            Seite {PAGENO} von {nbpg}
-        </div>
-    </htmlpagefooter>
-    <sethtmlpageheader name="MyHeader1" value="on" show-this-page="1"></sethtmlpageheader>
-    <sethtmlpagefooter name="MyFooter1" value="on" page="ALL"></sethtmlpagefooter>
-    </div>
+    <div class="header"><div class="muted" style="text-align: center; color: #666; font-size: 11px;">[[ simple.meta.periodLabel ]]<span data-repeat="simple.meta.occupancyTypeLabelKeys" data-repeat-as="type"> | [[ occupancyLabels[type]|trans({}, 'Housekeeping') ]]</span> | [[ simple.meta.subsidiaryName ?: (simple.meta.subsidiaryAllLabelKey|trans({}, 'Housekeeping')) ]] | Erzeugt [[ simple.meta.generatedAt ]]</div></div>
+    <div class="footer"><div class="muted" style="text-align: right; font-size: 10px;">Seite {PAGENO} von {nbpg}</div></div>
 
-    <h2>{{ 'housekeeping.title'|trans({}, 'Housekeeping') }} ({{ filters.start|date('d.m.Y') }})</h2>
+    <h2>[[ 'housekeeping.title'|trans({}, 'Housekeeping') ]] ([[ simple.views.housekeepingDay.date|date('d.m.Y') ]])</h2>
 
     <table>
         <thead>
         <tr>
-            <th>{{ 'housekeeping.room'|trans({}, 'Housekeeping') }}</th>
-            <th>{{ 'housekeeping.occupancy'|trans({}, 'Housekeeping') }}</th>
-            <th>{{ 'housekeeping.guests'|trans({}, 'Housekeeping') }}</th>
-            <th>{{ 'housekeeping.reservation'|trans({}, 'Housekeeping') }}</th>
-            <th>{{ 'housekeeping.status'|trans({}, 'Housekeeping') }}</th>
-            <th>{{ 'housekeeping.assigned_to'|trans({}, 'Housekeeping') }}</th>
-            <th style="width: 20%">{{ 'housekeeping.note'|trans({}, 'Housekeeping') }}</th>
+            <th>[[ 'housekeeping.room'|trans({}, 'Housekeeping') ]]</th>
+            <th>[[ 'housekeeping.occupancy'|trans({}, 'Housekeeping') ]]</th>
+            <th>[[ 'housekeeping.guests'|trans({}, 'Housekeeping') ]]</th>
+            <th>[[ 'housekeeping.reservation'|trans({}, 'Housekeeping') ]]</th>
+            <th>[[ 'housekeeping.status'|trans({}, 'Housekeeping') ]]</th>
+            <th>[[ 'housekeeping.assigned_to'|trans({}, 'Housekeeping') ]]</th>
+            <th style="width: 20%">[[ 'housekeeping.note'|trans({}, 'Housekeeping') ]]</th>
         </tr>
         </thead>
         <tbody>
-        {% set dayKey = filters.start|date('Y-m-d') %}
-        {% set dayView = dayViews[dayKey] ?? null %}
-        {% set rows = dayView ? dayView.rows : [] %}
-        {% for row in rows %}
-            {% set status = row.status %}
-            {% set occupancyLabel = occupancyLabels[row.occupancyType] ?? row.occupancyType %}
-            {% set statusValue = status ? status.hkStatus.value : '' %}
-            {% set statusLabel = statusValue ? (statusLabels[statusValue] ?? statusValue) : '' %}
-            <tr>
-                <td>{{ row.apartment.number }} {{ row.apartment.description }}</td>
-                <td>{{ occupancyLabel|trans({}, 'Housekeeping') }}</td>
-                <td>{{ row.guestCount ?? '' }}</td>
-                <td>{{ row.reservationSummary ?? '' }}</td>
-                <td>{% if statusLabel %}{{ statusLabel|trans({}, 'Housekeeping') }}{% endif %}</td>
-                <td>
-                    {% if status and status.assignedTo %}
-                        {{ status.assignedTo.firstname }} {{ status.assignedTo.lastname }}
-                    {% endif %}
-                </td>
-                <td>{% if status %}{{ status.note ?? '' }}{% endif %}</td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="8">-</td>
-            </tr>
-        {% endfor %}
+        <tr data-repeat="simple.views.housekeepingDay.rows" data-repeat-as="row">
+            <td>[[ row.room ]]</td>
+            <td>[[ row.occupancyLabelKey|trans({}, 'Housekeeping') ]]</td>
+            <td>[[ row.guests ]]</td>
+            <td>[[ row.reservationSummary ]]</td>
+            <td>[[ row.statusLabelKey ? (row.statusLabelKey|trans({}, 'Housekeeping')) : '' ]]</td>
+            <td>[[ row.assignedTo ]]</td>
+            <td>[[ row.note ]]</td>
+        </tr>
         </tbody>
     </table>
 </body>

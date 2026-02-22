@@ -3,122 +3,212 @@
 <head>
     <meta charset="UTF-8">
     <style>
-        body { font-family: Arial, sans-serif; font-size: 12px; }
-        h2 { margin: 0 0 8px; }
-        table { width: 100%; border-collapse: collapse; }
-        td, th { padding: 6px 4px; vertical-align: top; }
-        .section { margin: 12px 0 6px; font-weight: bold; }
-        .line-cell { border-bottom: 1px solid #000; height: 16px; }
-        .muted { color: #666; font-size: 11px; }
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 10pt;
+            color: #333;
+            margin: 0;
+            padding: 20px 30px;
+            line-height: 1.4;
+        }
+        h1 {
+            font-size: 16pt;
+            font-weight: 600;
+            margin: 0 0 4px;
+            color: #1a1a1a;
+            letter-spacing: 0.3px;
+        }
+        .subtitle {
+            font-size: 9pt;
+            color: #888;
+            margin: 0 0 18px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #2c3e50;
+        }
+        .section-header {
+            font-size: 9pt;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #2c3e50;
+            margin: 16px 0 6px;
+            padding: 4px 0;
+            border-bottom: 1px solid #2c3e50;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        td, th {
+            padding: 5px 4px;
+            vertical-align: bottom;
+            font-size: 9pt;
+        }
+        .label {
+            color: #666;
+            font-size: 8pt;
+            padding-bottom: 1px;
+            vertical-align: bottom;
+            white-space: nowrap;
+        }
+        .value {
+            border-bottom: 1px solid #bbb;
+            min-height: 14px;
+            padding-bottom: 2px;
+            color: #1a1a1a;
+        }
+        .empty-value {
+            border-bottom: 1px solid #ccc;
+            min-height: 14px;
+            padding-bottom: 2px;
+        }
+        .guests-table th {
+            font-size: 8pt;
+            color: #666;
+            font-weight: 600;
+            text-align: left;
+            padding: 3px 4px;
+            border-bottom: 1px solid #999;
+        }
+        .guests-table td {
+            border-bottom: 1px solid #ccc;
+            height: 20px;
+        }
+        .signature-area {
+            margin-top: 30px;
+        }
+        .signature-line {
+            border-bottom: 1px solid #999;
+            height: 30px;
+        }
+        .hint {
+            font-size: 7pt;
+            color: #999;
+            margin-top: 20px;
+            text-align: center;
+        }
+        /* Reset p tags inserted by Tiptap editor */
+        h1 p, .subtitle p, .section-header p, .hint p,
+        td p, th p {
+            margin: 0;
+            padding: 0;
+            display: inline;
+        }
     </style>
 </head>
 <body>
-    <div>
-    {% set reservation = reservation1 ?? (reservations is defined ? reservations|first : null) %}
-    {% set booker = reservation ? reservation.booker : null %}
-    {% set addr = address ?? null %}
-    </div>
-    <h2>Gästemeldeschein / Registration Form</h2>
+    <h1>Gästemeldeschein</h1>
+    <div class="subtitle">Registration Form</div>
 
-    <div class="section">Persönliche Angaben / Personal details</div>
+    <div class="section-header">Persönliche Angaben &middot; Personal Details</div>
     <table>
         <tr>
-            <td style="width: 25%">Name / Last name</td>
-            <td style="width: 25%" class="line-cell">{{ (booker ? booker.lastname : '') ?: '&nbsp;'|raw }}</td>
-            <td style="width: 25%">Vorname / First name</td>
-            <td style="width: 25%" class="line-cell">{{ (booker ? booker.firstname : '') ?: '&nbsp;'|raw }}</td>
+            <td class="label" style="width: 18%">Name / Last name</td>
+            <td class="value" style="width: 32%">[[ (reservation1.booker ? reservation1.booker.lastname : '') ?: '&nbsp;'|raw ]]</td>
+            <td class="label" style="width: 18%">Vorname / First name</td>
+            <td class="value" style="width: 32%">[[ (reservation1.booker ? reservation1.booker.firstname : '') ?: '&nbsp;'|raw ]]</td>
         </tr>
         <tr>
-            <td>Geb.datum / Date of birth</td>
-            <td class="line-cell">{{ (booker and booker.birthday ? booker.birthday|date('d.m.Y') : '') ?: '&nbsp;'|raw }}</td>
-            <td>Geschlecht / Gender</td>
-            <td class="line-cell">{{ (booker ? booker.salutation : '') ?: '&nbsp;'|raw }}</td>
+            <td class="label">Geburtsdatum / Date of birth</td>
+            <td class="value">[[ (reservation1.booker and reservation1.booker.birthday ? reservation1.booker.birthday|date('d.m.Y') : '') ?: '&nbsp;'|raw ]]</td>
+            <td class="label">Geschlecht / Gender</td>
+            <td class="value">[[ (reservation1.booker ? reservation1.booker.salutation : '') ?: '&nbsp;'|raw ]]</td>
         </tr>
         <tr>
-            <td>Staatsangehörigkeit / Nationality</td>
-            <td class="line-cell">{{ (addr ? addr.country : '') ?: '&nbsp;'|raw }}</td>
-            <td>Ausweisnummer / ID number</td>
-            <td class="line-cell">{{ (booker ? booker.IDNumber : '') ?: '&nbsp;'|raw }}</td>
+            <td class="label">Staatsangehörigkeit / Nationality</td>
+            <td class="value">[[ (address ? address.country : '') ?: '&nbsp;'|raw ]]</td>
+            <td class="label">Ausweisnummer / ID number</td>
+            <td class="value">[[ (reservation1.booker ? reservation1.booker.IDNumber : '') ?: '&nbsp;'|raw ]]</td>
         </tr>
         <tr>
-            <td>Telefon / Phone (optional)</td>
-            <td class="line-cell">{{ (addr ? addr.phone : '') ?: '&nbsp;'|raw }}</td>
-            <td>E-Mail / Email (optional)</td>
-            <td class="line-cell">{{ (addr ? addr.email : '') ?: '&nbsp;'|raw }}</td>
+            <td class="label">Telefon / Phone</td>
+            <td class="value">[[ (address ? address.phone : '') ?: '&nbsp;'|raw ]]</td>
+            <td class="label">E-Mail / Email</td>
+            <td class="value">[[ (address ? address.email : '') ?: '&nbsp;'|raw ]]</td>
         </tr>
     </table>
 
-    <div class="section">Aufenthalt / Stay</div>
+    <div class="section-header">Aufenthalt &middot; Stay</div>
     <table>
         <tr>
-            <td style="width: 25%">Anreise / Arrival</td>
-            <td style="width: 25%" class="line-cell">{{ (reservation ? reservation.startDate|date('d.m.Y') : '') ?: '&nbsp;'|raw }}</td>
-            <td style="width: 25%">Abreise / Departure</td>
-            <td style="width: 25%" class="line-cell">{{ (reservation ? reservation.endDate|date('d.m.Y') : '') ?: '&nbsp;'|raw }}</td>
+            <td class="label" style="width: 18%">Anreise / Arrival</td>
+            <td class="value" style="width: 32%">[[ (reservation1 ? reservation1.startDate|date('d.m.Y') : '') ?: '&nbsp;'|raw ]]</td>
+            <td class="label" style="width: 18%">Abreise / Departure</td>
+            <td class="value" style="width: 32%">[[ (reservation1 ? reservation1.endDate|date('d.m.Y') : '') ?: '&nbsp;'|raw ]]</td>
         </tr>
     </table>
 
-    <div class="section">Privatanschrift / Private address</div>
+    <div class="section-header">Privatanschrift &middot; Private Address</div>
     <table>
         <tr>
-            <td style="width: 25%">Straße / Street</td>
-            <td style="width: 75%" class="line-cell">{{ (addr ? addr.address : '') ?: '&nbsp;'|raw }}</td>
+            <td class="label" style="width: 18%">Straße / Street</td>
+            <td class="value" style="width: 82%" colspan="3">[[ (address ? address.address : '') ?: '&nbsp;'|raw ]]</td>
         </tr>
         <tr>
-            <td>PLZ / ZIP</td>
-            <td class="line-cell">{{ (addr ? addr.zip : '') ?: '&nbsp;'|raw }}</td>
-        </tr>
-        <tr>
-            <td>Ort / City</td>
-            <td class="line-cell">{{ (addr ? addr.city : '') ?: '&nbsp;'|raw }}</td>
-        </tr>
-        <tr>
-            <td>Land / Country</td>
-            <td class="line-cell">{{ (addr ? addr.country : '') ?: '&nbsp;'|raw }}</td>
+            <td class="label" style="width: 18%">PLZ, Ort / ZIP, City</td>
+            <td class="value" style="width: 32%">[[ (address ? address.zip : '') ?: '&nbsp;'|raw ]]&nbsp;&nbsp;[[ (address ? address.city : '') ?: '&nbsp;'|raw ]]</td>
+            <td class="label" style="width: 18%">Land / Country</td>
+            <td class="value" style="width: 32%">[[ (address ? address.country : '') ?: '&nbsp;'|raw ]]</td>
         </tr>
     </table>
 
-    <div class="section">Rechnungsanschrift / Billing address</div>
+    <div class="section-header">Rechnungsanschrift &middot; Billing Address</div>
     <table>
         <tr>
-            <td style="width: 35%">Firma / Company</td>
-            <td style="width: 65%" class="line-cell">{{ (addr ? addr.company : '') ?: '&nbsp;'|raw }}</td>
+            <td class="label" style="width: 18%">Firma / Company</td>
+            <td class="value" style="width: 82%" colspan="3">[[ (address ? address.company : '') ?: '&nbsp;'|raw ]]</td>
         </tr>
         <tr>
-            <td>Firmenanschrift / Company address</td>
-            <td class="line-cell">{{ '&nbsp;'|raw }}</td>
+            <td class="label" style="width: 18%">Anschrift / Address</td>
+            <td class="empty-value" style="width: 82%" colspan="3">[[ '&nbsp;'|raw ]]</td>
         </tr>
     </table>
 
-    <div class="section">Mitreisende / Accompanying guests</div>
-    <table>
+    <div class="section-header">Mitreisende &middot; Accompanying Guests</div>
+    <table class="guests-table">
         <thead>
         <tr>
-            <th style="text-align:left;">Name / Last name</th>
-            <th style="text-align:left;">Vorname / First name</th>
-            <th style="text-align:left;">Geburtsdatum / Date of birth</th>
+            <th style="width: 35%">Name / Last name</th>
+            <th style="width: 35%">Vorname / First name</th>
+            <th style="width: 30%">Geburtsdatum / Date of birth</th>
         </tr>
         </thead>
         <tbody>
-        {% for i in 1..4 %}
-            <tr>
-                <td class="line-cell">{{ '&nbsp;'|raw }}</td>
-                <td class="line-cell">{{ '&nbsp;'|raw }}</td>
-                <td class="line-cell">{{ '&nbsp;'|raw }}</td>
-            </tr>
-        {% endfor %}
+        <tr>
+            <td>[[ '&nbsp;'|raw ]]</td>
+            <td>[[ '&nbsp;'|raw ]]</td>
+            <td>[[ '&nbsp;'|raw ]]</td>
+        </tr>
+        <tr>
+            <td>[[ '&nbsp;'|raw ]]</td>
+            <td>[[ '&nbsp;'|raw ]]</td>
+            <td>[[ '&nbsp;'|raw ]]</td>
+        </tr>
+        <tr>
+            <td>[[ '&nbsp;'|raw ]]</td>
+            <td>[[ '&nbsp;'|raw ]]</td>
+            <td>[[ '&nbsp;'|raw ]]</td>
+        </tr>
+        <tr>
+            <td>[[ '&nbsp;'|raw ]]</td>
+            <td>[[ '&nbsp;'|raw ]]</td>
+            <td>[[ '&nbsp;'|raw ]]</td>
+        </tr>
         </tbody>
     </table>
-    <p></p>
-    <p></p>
-    <div class="section">Unterschrift / Signature</div>
-    <table>
-        <tr>
-            <td style="width: 25%">Datum / Date</td>
-            <td style="width: 25%" class="line-cell">{{ '&nbsp;'|raw }}</td>
-            <td style="width: 25%">Unterschrift / Signature</td>
-            <td style="width: 25%" class="line-cell">{{ '&nbsp;'|raw }}</td>
-        </tr>
-    </table>
+
+    <div class="signature-area">
+        <div class="section-header">Unterschrift &middot; Signature</div>
+        <table>
+            <tr>
+                <td class="label" style="width: 18%">Datum / Date</td>
+                <td class="signature-line" style="width: 32%">[[ '&nbsp;'|raw ]]</td>
+                <td class="label" style="width: 18%">Unterschrift / Signature</td>
+                <td class="signature-line" style="width: 32%">[[ '&nbsp;'|raw ]]</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="hint">Bitte leserlich ausfüllen &middot; Please fill in legibly</div>
 </body>
 </html>

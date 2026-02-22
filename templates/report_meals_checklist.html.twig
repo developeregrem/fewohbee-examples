@@ -12,92 +12,27 @@
     </style>
 </head>
 <body>
-    <div>
-    <htmlpageheader name="MyHeader1">
-        <div class="muted" style="text-align: center">
-            {% set period = filters.start|date('d.m.Y') %}
-            {% if filters.start != filters.end %}
-                {% set period = period ~ ' - ' ~ (filters.end|date('d.m.Y')) %}
-            {% endif %}
-            {{ period }}
-            {% for type in filters.occupancyTypes %}
-                | {{ occupancyLabels[type]|trans({}, 'Housekeeping') }}
-            {% endfor %}
-            {% if filters.subsidiary %}
-                | {{ filters.subsidiary.name }}
-            {% else %}
-                | alle Niederlassungen
-            {% endif %}
-            | Erzeugt {{ "now"|date('d.m.Y H:i') }}
-        </div>
-    </htmlpageheader>
-    <htmlpagefooter name="MyFooter1">
-        <div class="muted" style="text-align: right; font-size: 10px;">
-            Seite {PAGENO} von {nbpg}
-        </div>
-    </htmlpagefooter>
-    <sethtmlpageheader name="MyHeader1" value="on" show-this-page="1"></sethtmlpageheader>
-    <sethtmlpagefooter name="MyFooter1" value="on" page="ALL"></sethtmlpagefooter>
-    </div>
+    <div class="header"><div class="muted" style="text-align: center; color: #666; font-size: 11px;">[[ simple.meta.periodLabel ]]<span data-repeat="simple.meta.occupancyTypeLabelKeys" data-repeat-as="type"> | [[ occupancyLabels[type]|trans({}, 'Housekeeping') ]]</span> | [[ simple.meta.subsidiaryName ?: (simple.meta.subsidiaryAllLabelKey|trans({}, 'Housekeeping')) ]] | Erzeugt [[ simple.meta.generatedAt ]]</div></div>
+    <div class="footer"><div class="muted" style="text-align: right; font-size: 10px;">Seite {PAGENO} von {nbpg}</div></div>
     
     <h2>Frühstück Checkliste</h2>
-    <div>
-    {% set visibleApartmentIds = [] %}
-    {% for dayView in dayViews %}
-        {% for row in dayView.rows %}
-            {% set apartmentId = row.apartment.id %}
-            {% if apartmentId not in visibleApartmentIds %}
-                {% set visibleApartmentIds = visibleApartmentIds|merge([apartmentId]) %}
-            {% endif %}
-        {% endfor %}
-    {% endfor %}
-    </div>
     <table>
         <thead>
         <tr>
             <th>Zimmer</th>
             <th>Gäste</th>
-            {% for day in rangeView.days %}
-                <th>{{ day|date('d.m') }}</th>
-            {% endfor %}
+            <th data-repeat="simple.days" data-repeat-as="day">[[ day.label ]]</th>
         </tr>
         </thead>
         <tbody>
-        {% for apartment in rangeView.apartments %}
-            {% if apartment.id in visibleApartmentIds %}
-            {% set guestNames = [] %}
-            {% for reservation in reservations %}
-                {% if reservation.appartment and reservation.appartment.id == apartment.id %}
-                    {% for customer in reservation.customers %}
-                        {% set name = (customer.lastname ~ ', ' ~ customer.firstname)|trim(', ') %}
-                        {% if name != '' and name not in guestNames %}
-                            {% set guestNames = guestNames|merge([name]) %}
-                        {% endif %}
-                    {% endfor %}
-                    {% if reservation.customers is empty and reservation.booker %}
-                        {% set name = (reservation.booker.lastname ~ ', ' ~ reservation.booker.firstname)|trim(', ') %}
-                        {% if name != '' and name not in guestNames %}
-                            {% set guestNames = guestNames|merge([name]) %}
-                        {% endif %}
-                    {% endif %}
-                {% endif %}
-            {% endfor %}
-            {% if guestNames is empty %}
-                {% set guestNames = ['-'] %}
-            {% endif %}
-            {% for guestName in guestNames %}
-                <tr>
-                    <td>{{ apartment.number }}</td>
-                    <td>{{ guestName }}</td>
-                    {% for day in rangeView.days %}
-                            <td></td>
-                    {% endfor %}
-                </tr>
-            {% endfor %}
-            {% endif %}
-        {% endfor %}
+        <tr data-repeat="simple.views.mealsChecklist.rows" data-repeat-as="row">
+            <td>[[ row.room ]]</td>
+            <td>[[ row.guest ]]</td>
+            <td data-repeat="row.cells" data-repeat-as="cell"></td>
+        </tr>
         </tbody>
     </table>
+    <p data-if="simple.views.mealsChecklist.rows is empty">-</p>
     
 </body>
 </html>

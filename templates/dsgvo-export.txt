@@ -34,7 +34,7 @@ h1 {
 </tr>
 <tr>
 <td class="first">Geburtsdatum:</td>
-<td>{% if customer.birthday %} [[ customer.birthday|date('d.m.Y') ]] {% endif %}</td>
+<td>[[ customer.birthday ? customer.birthday|date('d.m.Y') : '' ]]</td>
 </tr>
 <tr>
 <td class="first">Bemerkung:</td>
@@ -43,40 +43,39 @@ h1 {
 </tbody>
 </table>
 <h1>Adressen</h1>
-<!-- [% for address in customer.customerAddresses %] -->
+<div data-repeat="customer.customerAddresses" data-repeat-as="address">
 <h6 class="panel-title">[[ 'customer.contact'|trans ]] ([[ address.type|trans ]])</h6>
-<table class="general">{% if address.company %}
+<table class="general">
 <tbody>
-<tr>
+<tr data-if="address.company">
 <td class="first">[[ 'customer.company'|trans ]]:</td>
 <td>[[ address.company ]]</td>
 </tr>
-{% endif %}
 <tr>
 <td class="first">[[ 'reservation.preview.customer.address'|trans ]]:</td>
 <td>[[ address.address ]]<br />[[ address.zip ]] [[ address.city ]]<br />[[ address.country ]]</td>
 </tr>
 <tr>
 <td class="first">[[ 'customer.email'|trans ]]:</td>
-<td>{% if address.email %}[[ address.email ]]{% else %} -{% endif %}</td>
+<td>[[ address.email ? address.email : '-' ]]</td>
 </tr>
 <tr>
 <td class="first">[[ 'customer.phone'|trans ]]:</td>
-<td>{% if address.phone %}[[ address.phone ]]{% else %} -{% endif %}</td>
+<td>[[ address.phone ? address.phone : '-' ]]</td>
 </tr>
 <tr>
 <td class="first">[[ 'customer.fax'|trans ]]:</td>
-<td>{% if address.fax %}[[ address.fax ]]{% else %} -{% endif %}</td>
+<td>[[ address.fax ? address.fax : '-' ]]</td>
 </tr>
 <tr>
 <td class="first">[[ 'customer.mobilephone'|trans ]]:</td>
-<td>{% if address.mobilephone %}[[ address.mobilephone ]]{% else %} -{% endif %}</td>
+<td>[[ address.mobilephone ? address.mobilephone : '-' ]]</td>
 </tr>
 </tbody>
 </table>
-<!-- [% endfor %] -->
+</div>
 <h1>Übernachtungen</h1>
-<!-- [% for reservation in customer.reservations %] -->
+<div data-repeat="customer.reservations" data-repeat-as="reservation">
 <h6>[[ reservation.startDate|date('d.m.Y') ]] - [[ reservation.endDate|date('d.m.Y') ]] ([[ reservation.appartment.description ]])</h6>
 <table class="general">
 <tbody>
@@ -90,10 +89,10 @@ h1 {
 </tr>
 <tr>
 <td class="first">Rechnungen:</td>
-<td><!-- [% for invoice in reservation.invoices %] -->[[ invoice.number ]] ([[ invoice.date|date('d.m.Y') ]]){%if not loop.last %}, {% endif %}<!-- [% endfor %] --></td>
+<td><span data-repeat="reservation.invoices" data-repeat-as="invoice">[[ invoice.number ]] ([[ invoice.date|date('d.m.Y') ]]), </span></td>
 </tr>
 </tbody>
 </table>
-<!-- [% endfor %] -->
+</div>
 </body>
 </html>
