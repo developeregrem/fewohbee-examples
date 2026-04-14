@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <style type="text/css">
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 9pt;
+            color: #24323f;
+        }
+
+        .page {
+            position: relative;
+        }
+
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 14px;
+            border-bottom: 2px solid #17364d;
+        }
+
+        .header-title {
+            font-size: 18pt;
+            font-weight: bold;
+            color: #17364d;
+            padding-bottom: 8px;
+        }
+
+        .header-period {
+            text-align: right;
+            font-size: 10pt;
+            color: #4b5d6b;
+            vertical-align: bottom;
+            padding-bottom: 10px;
+        }
+
+        .journal-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        .journal-table th {
+            background: #17364d;
+            color: #ffffff;
+            font-size: 8pt;
+            font-weight: bold;
+            text-align: left;
+            padding: 8px 7px;
+            border-right: 1px solid #365772;
+        }
+
+        .journal-table th:last-child {
+            border-right: none;
+        }
+
+        .journal-table td {
+            padding: 7px;
+            border-bottom: 1px solid #dce5eb;
+            border-right: 1px solid #edf2f6;
+            vertical-align: top;
+            word-wrap: break-word;
+        }
+
+        .journal-table td:last-child {
+            border-right: none;
+        }
+
+        .journal-table tr:nth-child(even) td {
+            background: #f8fbfd;
+        }
+
+        .num {
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: -12mm;
+            left: 0;
+            right: 0;
+            font-size: 8pt;
+            color: #6c7b88;
+        }
+
+        .footer-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+    </style>
+</head>
+<body>
+    <div class="footer">
+        <table class="footer-table">
+            <tr>
+                <td>Buchungsjournal | [[ "now"|date("d.m.Y") ]]</td>
+                <td style="text-align: right;">{PAGENO}/{nbpg}</td>
+            </tr>
+        </table>
+    </div>
+<div class="page">
+    <table class="header-table">
+        <tr>
+            <td class="header-title">Buchungsjournal</td>
+            <td class="header-period">
+                [[ getLocalizedMonth(journal.month, 'MMMM', app.request.locale) ]] [[ journal.year ]]
+            </td>
+        </tr>
+    </table>
+
+    <table class="journal-table">
+        <tr>
+            <th style="width: 7%;">Beleg</th>
+            <th style="width: 9%;">Datum</th>
+            <th style="width: 17%;">Sollkonto</th>
+            <th style="width: 17%;">Habenkonto</th>
+            <th style="width: 10%;" class="num">Betrag</th>
+            <th style="width: 8%;" class="center">Steuer</th>
+            <th style="width: 13%;">Rechnung</th>
+            <th style="width: 17%;">Bemerkung</th>
+        </tr>
+        <tr data-repeat="journal.entries" data-repeat-as="entry">
+            <td>[[ entry.documentNumberF ]]</td>
+            <td>[[ entry.date|date('d.m.Y') ]]</td>
+            <td>[[ entry.debitAccount ? entry.debitAccount.label : '–' ]]</td>
+            <td>[[ entry.creditAccount ? entry.creditAccount.label : '–' ]]</td>
+            <td class="num">[[ entry.amountF ]] €</td>
+            <td class="center">[[ entry.taxRate ? entry.taxRate.rate : '0.00' ]] %</td>
+            <td>[[ entry.invoiceNumber ?: '–' ]]</td>
+            <td>[[ entry.remark ?: '–' ]]</td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>
