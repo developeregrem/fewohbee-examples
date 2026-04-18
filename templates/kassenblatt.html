@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <style type="text/css">
+        body {
+            font-family: arial, helvetica, sans-serif;
+            font-size: 8pt;
+            color: #24323f;
+        }
+
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 14px;
+            border-bottom: 2px solid #17364d;
+        }
+
+        .header-title {
+            font-size: 18pt;
+            font-weight: bold;
+            color: #17364d;
+            padding-bottom: 8px;
+        }
+
+        .header-period {
+            text-align: right;
+            font-size: 10pt;
+            color: #4b5d6b;
+            vertical-align: bottom;
+            padding-bottom: 10px;
+        }
+
+        .journal-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        .journal-table th {
+            background: #17364d;
+            color: #ffffff;
+            font-size: 8pt;
+            font-weight: bold;
+            text-align: left;
+            padding: 7px 5px;
+            border-right: 1px solid #365772;
+            white-space: nowrap;
+        }
+
+        .journal-table th:last-child {
+            border-right: none;
+        }
+
+        .journal-table td {
+            padding: 5px;
+            border-bottom: 1px solid #dce5eb;
+            border-right: 1px solid #edf2f6;
+            vertical-align: top;
+            word-wrap: break-word;
+        }
+
+        .journal-table td:last-child {
+            border-right: none;
+        }
+
+        .journal-table tr:nth-child(even) td {
+            background: #f8fbfd;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .num {
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .nowrap {
+            white-space: nowrap;
+        }
+
+        .totals-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+        }
+
+        .totals-label {
+            text-align: right;
+            color: #4b5d6b;
+            font-weight: bold;
+            padding: 4px 8px 4px 0;
+        }
+
+        .totals-value {
+            width: 20%;
+            text-align: right;
+            color: #17364d;
+            font-weight: bold;
+            padding: 4px 0;
+            white-space: nowrap;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: -12mm;
+            left: 0;
+            right: 0;
+            font-size: 8pt;
+            color: #6c7b88;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+<div class="footer">{PAGENO}/{nbpg}</div>
+<table class="header-table">
+    <tr>
+        <td class="header-title">Kassenblatt</td>
+        <td class="header-period">
+            [[ getLocalizedMonth(journal.cashMonth, 'MMMM', app.request.locale) ]] [[ journal.cashYear ]]
+        </td>
+    </tr>
+</table>
+
+<table class="journal-table">
+    <tr>
+        <th>#</th>
+        <th class="num">Einnahmen</th>
+        <th class="num">Ausgaben</th>
+        <th class="num">Bestand €</th>
+        <th>Gegenkto.</th>
+        <th class="nowrap">Rg.Nr.</th>
+        <th class="nowrap">Bel.Nr.</th>
+        <th class="nowrap">Datum</th>
+        <th>Bemerkung</th>
+    </tr>
+    <tr data-repeat="journal.cashJournalEntries" data-repeat-as="entry">
+        <td class="center">[[ loop.index ]]</td>
+        <td class="num">[[ entry.incomesF ]]</td>
+        <td class="num">[[ entry.expensesF ]]</td>
+        <td class="num">[[ entry.inventoryF ]]</td>
+        <td>[[ entry.counterAccount ]]</td>
+        <td class="nowrap">[[ entry.invoiceNumber ]]</td>
+        <td class="nowrap">[[ entry.documentNumberF ]]</td>
+        <td class="nowrap">[[ entry.date|date('d.m.Y') ]]</td>
+        <td>[[ entry.remark ]]</td>
+    </tr>
+</table>
+
+<table class="totals-table">
+    <tr>
+        <td class="totals-label">Bestand Anfang:</td>
+        <td class="totals-value">[[ journal.cashStartF ]] €</td>
+    </tr>
+    <tr>
+        <td class="totals-label">Bestand Ende:</td>
+        <td class="totals-value">[[ journal.cashEndF ]] €</td>
+    </tr>
+</table>
+</body>
+</html>
