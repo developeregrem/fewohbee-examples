@@ -43,7 +43,49 @@ table th,td {
 </tbody>
 </table>
 <p style="text-align: left;"> </p>
-<table style="width: 100%;">
+<table style="width: 100%;" data-if="invoice.positions|filter(p => p.positionGroup == 'apartment_modifier')|length > 0">
+<thead>
+<tr style="background-color: #ced4d9;">
+<th style="border-bottom: 1px solid #333333; text-align: left;" scope="col"><span style="font-family: arial, helvetica, sans-serif; font-size: 10pt;">Aufschläge / Ermäßigungen</span></th>
+<th style="border-bottom: 1px solid #333333; text-align: center;" scope="col"><span style="font-family: arial, helvetica, sans-serif; font-size: 10pt;">Anzahl</span></th>
+<th style="text-align: right; border-bottom: 1px solid #333333;" scope="col"><span style="font-family: arial, helvetica, sans-serif; font-size: 10pt;">Einzelpreis</span></th>
+<th style="text-align: right; border-bottom: 1px solid #333333;" scope="col"><span style="font-family: arial, helvetica, sans-serif; font-size: 10pt;">MwSt.</span></th>
+<th style="text-align: right; border-bottom: 1px solid #333333;" scope="col"><span style="font-family: arial, helvetica, sans-serif; font-size: 10pt;">Gesamt</span></th>
+</tr>
+</thead>
+<tbody>
+<tr style="border-bottom: 1px solid #DDDDDD;" data-repeat="invoice.positions|filter(p => p.positionGroup == 'apartment_modifier')" data-repeat-as="position">
+<td style="border-bottom: 1px solid #DDDDDD;">[[position.description]]</td>
+<td style="border-bottom: 1px solid #dddddd; text-align: center;">[[position.amount]]</td>
+<td style="text-align: right; border-bottom: 1px solid #DDDDDD;"><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;">[[position.priceFormated]] €</span></td>
+<td style="text-align: right; border-bottom: 1px solid #DDDDDD;">[[position.vat]]</td>
+<td style="text-align: right; border-bottom: 1px solid #DDDDDD;"><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;">[[position.totalPrice]] €</span></td>
+</tr>
+</tbody>
+</table>
+<p style="text-align: left;"> </p>
+<table style="width: 100%;" data-if="invoice.positions|filter(p => p.positionGroup == 'tourist_tax')|length > 0">
+<thead>
+<tr style="background-color: #ced4d9;">
+<th style="border-bottom: 1px solid #333333; text-align: left;" scope="col"><span style="font-family: arial, helvetica, sans-serif; font-size: 10pt;">Beherbergungsabgabe</span></th>
+<th style="border-bottom: 1px solid #333333; text-align: center;" scope="col"><span style="font-family: arial, helvetica, sans-serif; font-size: 10pt;">Anzahl</span></th>
+<th style="text-align: right; border-bottom: 1px solid #333333;" scope="col"><span style="font-family: arial, helvetica, sans-serif; font-size: 10pt;">Einzelpreis</span></th>
+<th style="text-align: right; border-bottom: 1px solid #333333;" scope="col"><span style="font-family: arial, helvetica, sans-serif; font-size: 10pt;">MwSt.</span></th>
+<th style="text-align: right; border-bottom: 1px solid #333333;" scope="col"><span style="font-family: arial, helvetica, sans-serif; font-size: 10pt;">Gesamt</span></th>
+</tr>
+</thead>
+<tbody>
+<tr style="border-bottom: 1px solid #DDDDDD;" data-repeat="invoice.positions|filter(p => p.positionGroup == 'tourist_tax')" data-repeat-as="position">
+<td style="border-bottom: 1px solid #DDDDDD;">[[position.description]]</td>
+<td style="border-bottom: 1px solid #dddddd; text-align: center;">[[position.amount]]</td>
+<td style="text-align: right; border-bottom: 1px solid #DDDDDD;"><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;">[[position.priceFormated]] €</span></td>
+<td style="text-align: right; border-bottom: 1px solid #DDDDDD;">[[position.vat]]</td>
+<td style="text-align: right; border-bottom: 1px solid #DDDDDD;"><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;">[[position.totalPrice]] €</span></td>
+</tr>
+</tbody>
+</table>
+<p style="text-align: left;"> </p>
+<table style="width: 100%;" data-if="invoice.positions|filter(p => p.positionGroup != 'tourist_tax' and p.positionGroup != 'apartment_modifier')|length > 0">
 <thead>
 <tr style="background-color: #ced4d9;">
 <th style="border-bottom: 1px solid #333333; text-align: left;" scope="col"><span style="font-family: arial, helvetica, sans-serif; font-size: 10pt;">weitere Leistungen</span></th>
@@ -54,15 +96,12 @@ table th,td {
 </tr>
 </thead>
 <tbody>
-<tr style="border-bottom: 1px solid #DDDDDD;" data-repeat="invoice.positions" data-repeat-as="position">
+<tr style="border-bottom: 1px solid #DDDDDD;" data-repeat="invoice.positions|filter(p => p.positionGroup != 'tourist_tax' and p.positionGroup != 'apartment_modifier')" data-repeat-as="position">
 <td style="border-bottom: 1px solid #DDDDDD;">[[position.description]]</td>
 <td style="border-bottom: 1px solid #dddddd; text-align: center;">[[position.amount]]</td>
 <td style="text-align: right; border-bottom: 1px solid #DDDDDD;"><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;">[[position.priceFormated]] €</span></td>
 <td style="text-align: right; border-bottom: 1px solid #DDDDDD;">[[position.vat]]</td>
 <td style="text-align: right; border-bottom: 1px solid #DDDDDD;"><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;">[[position.totalPrice]] €</span></td>
-</tr>
-<tr>
-<td style="text-align: right;" colspan="5"><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;"><strong>[[miscTotal]]</strong><strong> €</strong></span></td>
 </tr>
 </tbody>
 </table>
@@ -73,7 +112,7 @@ table th,td {
 <td style="width: 33.3333%;"><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif;">enthaltene Mehrwertsteuer</span><br />
 <table border="0">
 <tbody>
-<tr data-repeat="vats" data-repeat-key="key" data-repeat-as="value">
+<tr data-repeat="vats|filter((v, k) => k > 0)" data-repeat-key="key" data-repeat-as="value">
 <td style="text-align: right;">[[key]] %:</td>
 <td style="text-align: right;"> [[value.nettoFormated]] €</td>
 </tr>
