@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; font-size: 12px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 18px; }
+        th, td { border: 1px solid #000; padding: 6px; vertical-align: top; }
+        th { background: #e8eef2; text-align: left; }
+        .text-right { text-align: right; }
+        .muted { color: #666; font-size: 11px; }
+        .section-title { background: #2e6c80; color: #fff; padding: 6px 8px; margin-top: 14px; font-weight: bold; }
+        .totals-row { background: #f0f4f7; font-weight: bold; }
+        .empty-cell { color: #999; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="muted" style="text-align: center;">
+            [[ simple.meta.subsidiaryName ?: (simple.meta.subsidiaryAllLabelKey|trans({}, 'Housekeeping')) ]] |
+            [[ simple.meta.periodLabel ]] |
+            Erzeugt [[ simple.meta.generatedAt ]]
+        </div>
+    </div>
+    <div class="footer">
+        <div class="muted" style="text-align: right; font-size: 10px;">Seite {PAGENO} von {nbpg}</div>
+    </div>
+
+    <h2>Abrechnung Beherbergungsabgaben — [[ filters.start|date('m.Y') ]]</h2>
+
+    [% set selectedYear = filters.start|date('Y') %]
+    [% set selectedMonth = filters.start|date('n') %]
+    [% set currentTaxMonth = touristTax.months|filter(m => m.year == selectedYear and m.month == selectedMonth)|first %]
+    [% set currentTaxes = currentTaxMonth ? currentTaxMonth.taxes : [] %]
+
+    <div data-repeat="currentTaxes" data-repeat-as="tax">
+        <div class="section-title">[[ tax.name ]]</div>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 18%;">Anzahl Logiernächte</th>
+                    <th>Gäste</th>
+                    <th class="text-right" style="width: 18%;">Tarif pro Nacht</th>
+                    <th class="text-right" style="width: 18%;">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr data-repeat="tax.groups" data-repeat-as="group">
+                    <td>[[ group.totalNights ]]</td>
+                    <td>
+                        [[ group.label ]]
+                        <span data-if="not group.pricePerNightConsistent" class="muted">(uneinheitliche Tarife — bitte Konfiguration prüfen)</span>
+                    </td>
+                    <td class="text-right">[[ group.pricePerNight|number_format(2, ',', '.') ]]</td>
+                    <td class="text-right">[[ group.totalAmount|number_format(2, ',', '.') ]]</td>
+                </tr>
+                <tr data-if="tax.groups is empty">
+                    <td colspan="4" class="muted">Keine Buchungen mit Tarif in diesem Zeitraum.</td>
+                </tr>
+                <tr data-if="tax.groups is not empty" class="totals-row">
+                    <td>[[ tax.totalNights ]]</td>
+                    <td colspan="2">Total</td>
+                    <td class="text-right">[[ tax.totalAmount|number_format(2, ',', '.') ]]</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div data-if="currentTaxes is empty" class="muted">Keine gültigen Beherbergungsabgaben für den gewählten Monat konfiguriert.</div>
+
+    [% set currentStatisticsMonth = statistics.months|filter(m => m.year == selectedYear and m.month == selectedMonth)|first %]
+    [% set currentMetrics = currentStatisticsMonth ? currentStatisticsMonth.metrics : null %]
+
+    [% set bfsCodes = {
+        'CH': 1, 'DE': 11, 'FR': 13, 'IT': 14, 'AT': 15, 'GB': 16, 'IE': 17,
+        'NL': 18, 'BE': 19, 'LU': 20, 'DK': 21, 'SE': 22, 'NO': 23, 'FI': 24,
+        'ES': 25, 'PT': 26, 'GR': 28, 'TR': 29, 'LI': 32, 'IS': 33, 'PL': 34,
+        'HU': 35, 'BY': 36, 'BG': 37, 'MT': 38, 'CY': 39, 'CL': 40, 'US': 41,
+        'CA': 42, 'MX': 43, 'BR': 44, 'AR': 45, 'EG': 51, 'ZA': 53, 'BH': 60,
+        'IL': 61, 'IN': 62, 'JP': 64, 'QA': 68, 'KW': 69, 'AU': 70, 'CN': 72,
+        'HK': 74, 'ID': 75, 'KR': 76, 'MY': 77, 'PH': 78, 'NZ': 79, 'SG': 80,
+        'OM': 81, 'TW': 82, 'TH': 83, 'EE': 85, 'LV': 86, 'LT': 87, 'SA': 88,
+        'AE': 89, 'HR': 91, 'RO': 92, 'RU': 93, 'SK': 94, 'SI': 95, 'CZ': 96,
+        'UA': 97, 'RS': 98
+    } %]
+    [% set bfsLabels = {
+        'CH': 'Schweiz', 'DE': 'Deutschland', 'FR': 'Frankreich', 'IT': 'Italien',
+        'AT': 'Österreich', 'GB': 'Ver. Königreich Grossbritanien', 'IE': 'Irland (Eire)',
+        'NL': 'Niederlande', 'BE': 'Belgien', 'LU': 'Luxemburg', 'DK': 'Dänemark',
+        'SE': 'Schweden', 'NO': 'Norwegen', 'FI': 'Finnland', 'ES': 'Spanien',
+        'PT': 'Portugal', 'GR': 'Griechenland', 'TR': 'Türkei', 'LI': 'Liechtenstein',
+        'IS': 'Island', 'PL': 'Polen', 'HU': 'Ungarn', 'BY': 'Belarus (Weissrussland)',
+        'BG': 'Bulgarien', 'MT': 'Malta', 'CY': 'Zypern', 'CL': 'Chile',
+        'US': 'Vereinigte Staaten USA', 'CA': 'Kanada', 'MX': 'Mexiko',
+        'BR': 'Brasilien', 'AR': 'Argentinien', 'EG': 'Aegypten',
+        'ZA': 'Südafrika Republik', 'BH': 'Bahrain', 'IL': 'Israel', 'IN': 'Indien',
+        'JP': 'Japan', 'QA': 'Katar', 'KW': 'Kuwait', 'AU': 'Australien',
+        'CN': 'China', 'HK': 'Hongkong', 'ID': 'Indonesien', 'KR': 'Korea Republik',
+        'MY': 'Malaysia', 'PH': 'Phillipinen', 'NZ': 'Neuseeland, Ozeanien',
+        'SG': 'Singapur', 'OM': 'Oman', 'TW': 'Tawain', 'TH': 'Thailand',
+        'EE': 'Estland', 'LV': 'Lettland', 'LT': 'Litauen', 'SA': 'Saudi Arabien',
+        'AE': 'Vereinigte Arabische Emirate', 'HR': 'Kroatien', 'RO': 'Rumänien',
+        'RU': 'Russland', 'SK': 'Slowakei', 'SI': 'Slowenien',
+        'CZ': 'Tschechische Republik', 'UA': 'Ukraine', 'RS': 'Serbien'
+    } %]
+
+    <div class="section-title">Logiernächte nach Ländern</div>
+    [% set countryAndCategory = currentMetrics.tourism.overnights_by_country_and_category ?? {} %]
+    [% set columnTotals = {} %]
+    [% set grandTotal = 0 %]
+
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 6%;">Code</th>
+                <th>Logiernächte nach Ländern</th>
+                <th data-repeat="touristTax.guestCategories" data-repeat-as="category" class="text-right">[[ category.name ]]</th>
+                <th class="text-right">Total LN</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr data-repeat="bfsCodes|filter((bfsCode, countryCode) => countryAndCategory[countryCode] is defined)" data-repeat-key="countryCode" data-repeat-as="bfsCode">
+                [% set rowData = countryAndCategory[countryCode] ?? {} %]
+                [% set rowTotal = 0 %]
+                <td>[[ bfsCode ]]</td>
+                <td>[[ bfsLabels[countryCode] ]]</td>
+                <td data-repeat="touristTax.guestCategories" data-repeat-as="category" class="text-right">
+                    [% set categoryTotalKey = 'category_' ~ category.id %]
+                    [% set v = rowData[category.id] ?? 0 %]
+                    [% set rowTotal = rowTotal + v %]
+                    [% set columnTotals = columnTotals|merge({ (categoryTotalKey): (columnTotals[categoryTotalKey] ?? 0) + v }) %]
+                    [[ v|round(0) ]]
+                </td>
+                [% set grandTotal = grandTotal + rowTotal %]
+                <td class="text-right">[[ rowTotal|round(0) ]]</td>
+            </tr>
+            <tr class="totals-row">
+                <td colspan="2">Total Logiernächte</td>
+                <td data-repeat="touristTax.guestCategories" data-repeat-as="category" class="text-right">[[ (columnTotals['category_' ~ category.id] ?? 0)|round(0) ]]</td>
+                <td class="text-right">[[ grandTotal|round(0) ]]</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="muted" style="margin-top: 14px;">
+        * Befreiungen siehe örtliches Reglement der Gemeinde / Tourismusorganisation. Der vorliegende Bericht
+        wird vollständig aus den in der PMS-Software gepflegten Gastkategorien und Tarifen erzeugt; passt der
+        Hotelier seine Konfiguration an, ändern sich die Zahlen im nächsten Berichtsdruck automatisch.
+    </div>
+</body>
+</html>
